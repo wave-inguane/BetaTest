@@ -73,7 +73,7 @@ var server = app.listen(app.get('port'), function () {
     var host = server.address().address;
     var port = server.address().port;
     firebaseSetup();
-    //console.log('http://localhost:' + port + '/');
+    console.log('http://localhost:' + port + '/');
 });
 
 function firebaseSetup()
