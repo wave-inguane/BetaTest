@@ -3,8 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>Programming studies</title>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <style type="text/css">
+        body {
+            width: 95%;
+            margin: 0 auto;
+            font-family: sans-serif, Trebuchet MS, Trebuchet, Verdana, Arial;
+            font-size: 0.9em;
+            color: #807c72;
+        }
+        div{
+            width: 95%;
+            float: inherit;
+            margin: 1%;
+            border-radius: 10px;
+            overflow: auto;
+            /*border:1px solid steelblue;*/
+            border:1px solid #c9c9c9;
+        }
+        .accept-button{
+            width: 95%;
+            float: inherit;
+            margin: 1%;
+            border-radius: 0px;
+            overflow: auto;
+            border:1px solid #ffffff;
+
+        }
+        p.readable-font {
+           font-size: 2.0em;
+            padding: 10px;
+        }
+
+        h2{
+            padding: 10px;
+        }
+        .far-right{
+            float: right;
+        }
+    </style>
 </head>
 <body>
-        Welcome page/ First page
+        <div>
+
+            <h2>Welcome to Programming Studies</h2>
+            <br/><br/>
+            <p class="readable-font">This work is part of a joint project with researchers at UC Irvine
+                and is supported by a $1.4M grant from the National Science Foundation on Crowd Programming.</p>
+            <br>
+            <p class="readable-font">By clicking accept you agree to the terms and conditions ....</p>
+            <br>
+        </div>
+        <div class="accept-button">
+             <br><br><button id="accept_to_participate" class="btn btn-primary far-right">Accept</button>
+        </div>
+
+        <script>
+            //read jQuery book chapter 3
+        </script>
 </body>
 </html>
