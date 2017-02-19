@@ -5,6 +5,7 @@
 
 var express = require('express');
 var app = express();
+app.set('port',(process.env.PORT || 5000));
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -68,7 +69,7 @@ app.post('/demographics', function (req, res) {
 
 
 // Start the server.
-var server = app.listen((process.env.port || 8888), function () {
+var server = app.listen(app.get('port'), function () {
     var host = server.address().address;
     var port = server.address().port;
     firebaseSetup();
