@@ -23,6 +23,17 @@ app.get('/createWorkflows', function (req, res) {
     res.sendFile(__dirname + '/client/successCreatingWorkflows.html');
 });
 
+//-----------------------------------------------------------
+// First: display the welcome page
+//        TODO: draft a disclaimer 
+//
+//-----------------------------------------------------------
+app.get('/', function(req, res){
+	res.sendFile(__dirname + '/client/welcome.html');
+}
+
+
+
 // When a user first hits the study server, first check if they have already participated.
 // If not, send them to the screening test.
 app.get('/', function (req, res) {
