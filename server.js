@@ -33,7 +33,6 @@ app.get('/', function(req, res){
 }
 
 
-
 // When a user first hits the study server, first check if they have already participated.
 // If not, send them to the screening test.
 app.get('/', function (req, res) {
