@@ -4,18 +4,18 @@
   "description": "Infrastructure for conducting programming studies online",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tlatoza/ProgrammingStudies.git"
+    "url": "https://github.com/wave-inguane/BetaTest.git"
   },
   "author": "Thomas LaToza",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tlatoza/ProgrammingStudies/issues"
+    "url": "https://github.com/wave-inguane/BetaTest/issues"
   },
-  "homepage": "https://github.com/tlatoza/ProgrammingStudies",
+  "homepage": "https://github.com/wave-inguane/BetaTest",
   "dependencies": {
     "body-parser": "^1.16.1",
     "express": "^4.14.1",
