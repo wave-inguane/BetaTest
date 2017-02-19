@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index Page </title>
+    <style>
+    #main_wrap { 
+    display: table;
+}
+
+#sidebar {
+    background:pink;
+    min-width: 250px;
+    min-height: 650px;
+    display: table-cell;
+}
+
+#content {
+    background:purple;
+    display:table-cell;
+    /*width: 100%;*/
+    min-width: 1100px;
+   
+    min-height: 650px;
+}
+</style>
+ <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script>
+      var locations = ["welcome.html", "successCreatingWorkflows.html", "demographics.html","screening.html"];
+      //var locations2 = ["instructions1.html", "instructions2.html"];
+      var currentIndex = 0;
+      var len = locations.length;
+      //var len2 = locations2.length;
+      $(document).ready(function(){
+        $('#button1').click(function() {
+            currentIndex = this.value == "Next" ? 
+                currentIndex < len - 1 ? ++currentIndex : 0 :
+                 //changed from a colon to a semicolon
+                currentIndex > 0 ? --currentIndex : len - 1;
+                //currentIndex > 0 ? --currentIndex : len2 - 1;
+
+            $('#frame').attr('src', locations[currentIndex]);
+            //$('#sideFrame').attr('src', locations2[currentIndex]);
+        });
+      });
+    </script>
+
+</head>
+
+<body>
+<div id="main_wrap">
+    
+    <div id="content"> 
+        <iframe  id = "frame" src="welcome.html" width="1100" height="650" scrolling="no" frameborder="0">
+
+         </iframe>
+</div>
+
+<div id="sidebar">  
+    <p> This is where the instructions would go</p>
+    <button id = "button1" type="button" value = "Next">Next</button>
+    
+</div>
+
+</div>​
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<title>Programming studies</title>
+</head>
+<body>
+Waiting for participants to join.
+
+
+</body>
+
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+<script>
+    // Utility function to get URL parameter.
+    // From http://stackoverflow.com/questions/19491336/get-url-parameter-jquery
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+
+    var userID = getUrlParameter('userID');
+    var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');
+
+    // Add an entry to the waitlist to start waiting for a session to be assigned.
+    var waitEntryRef = waitListRef.push({ "userID": userID });
+
+    // If we disconnect before we get assigned a room, remove us from the waiting list.
+    waitEntryRef.onDisconnect().set(null);
+
+
+    // TODO: we want to watch only for changes to the entry for this element, not all changes.
+
+
+    // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
+    // does, join the session.
+    waitEntryRef.on("child_added", function(snapshot) {
+        var key = snapshot.key();
+        if (key == 'sessionURL') {
+            // Navigate to the server session URL, making sure to disable the back button for this URL
+            // (don't want participant joining another session later).
+            window.location.replace(snapshot.val());
+        }
+    });
+
+</script>
+
+</html>

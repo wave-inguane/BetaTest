@@ -1,0 +1,24 @@
+{
+  "name": "programming-studies",
+  "version": "4.2.2",
+  "description": "Infrastructure for conducting programming studies online",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tlatoza/ProgrammingStudies.git"
+  },
+  "author": "Thomas LaToza",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tlatoza/ProgrammingStudies/issues"
+  },
+  "homepage": "https://github.com/tlatoza/ProgrammingStudies",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "firebase": "^2.4.2"
+  }
+}
