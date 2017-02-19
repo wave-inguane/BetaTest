@@ -30,6 +30,7 @@ app.get('/createWorkflows', function (req, res) {
 //-----------------------------------------------------------
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/client/welcome.html');
+	res.sendFile(__dirname + '/client/styles.css');
 });
 
 
