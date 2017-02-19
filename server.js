@@ -30,7 +30,7 @@ app.get('/createWorkflows', function (req, res) {
 //-----------------------------------------------------------
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/client/welcome.html');
-}
+});
 
 
 // When a user first hits the study server, first check if they have already participated.
