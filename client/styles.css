@@ -1,0 +1,31 @@
+
+.main-div{
+    width: 95%;
+    float: inherit;
+    margin: 1%;
+    border-radius: 10px;
+    overflow: auto;
+    /*border:1px solid steelblue;*/
+    padding: 0px 0px 50px 50px;
+    border:1px solid #c9c9c9;
+}
+.accept-button{
+    width: 95%;
+    float: inherit;
+    margin: 1%;
+    border-radius: 0px;
+    overflow: auto;
+    border:1px solid #ffffff;
+
+}
+p.readable-font {
+    font-size: 1.0em;
+    padding: 10px;
+}
+
+h2{
+    padding: 10px;
+}
+.far-right{
+    float: right;
+}

@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
 <title>Programming studies</title>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-Waiting for participants to join.
-
-
+<div class="main-div">
+    Waiting for participants to join.
+</div>
 </body>
 
 
@@ -18,9 +24,7 @@ Waiting for participants to join.
     // From http://stackoverflow.com/questions/19491336/get-url-parameter-jquery
     var getUrlParameter = function getUrlParameter(sParam) {
         var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-                sURLVariables = sPageURL.split('&'),
-                sParameterName,
-                i;
+                sURLVariables = sPageURL.split('&'), sParameterName, i;
 
         for (i = 0; i < sURLVariables.length; i++) {
             sParameterName = sURLVariables[i].split('=');
@@ -32,6 +36,8 @@ Waiting for participants to join.
     };
 
     var userID = getUrlParameter('userID');
+    //console.log("userID = " + userID)
+
     var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');
 
     // Add an entry to the waitlist to start waiting for a session to be assigned.

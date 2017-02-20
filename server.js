@@ -13,6 +13,7 @@ var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;             // JSON structure for the next session
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('client'))
 app.set('port',(process.env.PORT || 5001));
 app.set('views', './views');
 app.set('view engine', 'mustache');
@@ -34,7 +35,7 @@ app.get('/', function(req, res){
 
 // When a user first hits the study server, first check if they have already participated.
 // If not, send them to the screening test.
-app.post('/screeningTask', function (req, res) {
+app.get('/screeningTask', function (req, res) {
     var workerId = req.query.workerId;
 
     // Check if there is already data for this worker in Firebase. If there is, the worker has already participated.
@@ -48,7 +49,6 @@ app.post('/screeningTask', function (req, res) {
             // We could also then use templating to set up worker specific content in the templates.
             // Like customizing the instructions. Or hiding or showing the chat system for different versions.
 
-
             res.sendFile(__dirname + '/client/screening.html');///?workerId=5'); // ?workerId=' + workerId);
         }
         else
@@ -58,24 +58,23 @@ app.post('/screeningTask', function (req, res) {
     });
 });
 
-
-
 // After finishing the screening, check if they passed. If so, send them to the demographics page.
 app.post('/screenSubmit', function (req, res) {
-    // TODO: Check if the user passed the screening test. --> see if the answer matched the answer for question 1
     console.log('screening submitted'); 
-    console.log(req.body.question1 + " " + req.body.taskTimeMillis); 
-
-    res.sendFile(__dirname + '/client/demographics.html');
+    console.log(req.body.question1 + " " + req.body.taskTimeMillis);
+    var result = req.body.question1;
+    if(result == 7)
+        res.sendFile(__dirname + '/client/demographics.html');
+    else
+        res.sendFile(__dirname + '/client/failedScreening.html');
 
 });
 
 
-// After finishing the demographics sruvey, send the user to the waiting room.
-app.post('/demographics', function (req, res) {
-    // TODO: store the demographics data to firebase, associated with the participant. // what specific demographic do we send? 
-
-    res.sendFile(__dirname + '/client/waitingRoom.html');
+// After finishing the demographics survey, send the user to the waiting room.
+app.post('/waitingroom', function (req, res) {
+    // TODO: store the demographics data to firebase, associated with the participant. // what specific demographic do we send?
+      res.sendFile(__dirname + '/client/waitingRoom.html');
 });
 
 

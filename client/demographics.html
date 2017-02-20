@@ -3,33 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Programming studies</title>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+ <!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <style type="text/css">
+
+        div {
+            border-bottom: 1px solid #efefef;
+            margin: 10px;
+            padding-bottom: 10px;
+
+            width: 400px;
+        }
+        .radio-buttons label {
+            float: none;}
+
+    </style>
 </head>
 <body>
-<!-- SEE PAGE 258 JAVASCRIPT & JQUERY: THE MISS ING MANUAL-->
+<!-- SEE PAGE 258 JAVASCRIPT & JQUERY: THE MISS ING MANUAL name="signup" -->
 demographics page
-<form action="process.php" method="post" name="signup" id="signup">
+<div class="main-div">
+<form id="signup" action="/waitingroom" method="post" >
     <div>
         <label for="username" class="label">Name</label>
         <input name="username" type="text" id="username" size="36">
     </div>
-    <div><span class="label">Hobbies</span>
-        <input type="checkbox" name="hobby" id="heliskiing" value="helisking">
-        <label for="heliskiing">Heli-skiing</label>
-        <input type="checkbox" name="hobby" id="pickle" value="pickle">
-        <label for="pickle">Pickle eating</label>
-        <input type="checkbox" name="hobby" id="walnut" value="walnut">
-        <label for="walnut">Making walnut butter</label>
+    <div><span class="label">Participation</span>
+        <input type="checkbox" name="session" id="single" value="single">
+        <label for="single">Single</label>
+        <input type="checkbox" name="session" id="group" value="group">
+        <label for="group">Group</label>
+
     </div>
     <div>
-        <label for="planet" class="label">Planet of Birth</label>
-        <select name="planet" id="planet">
-            <option>Earth</option>
-            <option>Mars</option>
-            <option>Alpha Centauri</option>
-            <option>You've never heard of it</option>
+        <label for="continent" class="label">Location</label>
+        <select name="continent" id="continent">
+            <option>Europe</option>
+            <option>Africa</option>
+            <option>Asia</option>
+            <option>North America</option>
+            <option>South America</option>
+            <option>Antarctica</option>
+            <option>Australia</option>
         </select>
     </div>
-    <div class="labelBlock">Would you like to receive annoying e-mail from us?
+    <div class="labelBlock">Would you like to receive feedback from us?
     </div>
     <div class="indent">
         <input type="radio" name="spam" id="yes" value="yes" checked="checked">
@@ -40,19 +62,21 @@ demographics page
         <label for="choice">Do I have a choice?</label>
     </div>
     <div>
-        <input type="submit" name="submit" id="submit" value="Submit">
+        <button id="submitDemos" class="btn btn-primary">Submit</button>
     </div>
 </form>
+</div>
 
 <script>
-    $(document).ready(function() {
-         $('#signup').submit(function() {
+    $('#submitDemos').click(function() {
+        $('#signup').submit(function() {
             if ($('#username').val() == '') {
                 alert('Please supply a name in the Name field.');
-                 return false;
+                return false;
             }
-             }); // end submit()
-        }); // end ready()
+        }); // end submit()
+    });
+
 </script>
 </body>
 </html>
