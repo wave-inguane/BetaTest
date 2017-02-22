@@ -88,6 +88,8 @@ app.post('/waitingroom', function (req, res) {
      // TODO: store the demographics data to firebase, associated with the participant.
      var workerId = req.body.workerID;
      var session = req.body.session.valueOf();
+     var currstatus = req.body.currentstatus;
+		 var yearsOfExp = req.body.yearsExp;
 
     // Check if there is already data for this worker in Firebase.
     // If there is, the worker has already participated.
@@ -96,7 +98,9 @@ app.post('/waitingroom', function (req, res) {
         if (snapshot.val() == null) {
             //add new worker
             workerRef.push({ 'workerId': workerId,
-                             'session': session});
+                             'session': session,
+														 'status':currstatus,
+														 'experience':yearsOfExp});
 
             console.log('WORKER ID: ' + workerId );
             if(session == "single"){
