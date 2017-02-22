@@ -89,7 +89,8 @@ app.post('/waitingroom', function (req, res) {
      var workerId = req.body.workerID;
      var session = req.body.session.valueOf();
      var currstatus = req.body.currentstatus;
-		 
+		 var yearsOfExp = req.body.yearsExp;
+
     // Check if there is already data for this worker in Firebase.
     // If there is, the worker has already participated.
     var workerRef = new Firebase(firebaseStudyURL + '/workers/' + workerId);
@@ -98,7 +99,8 @@ app.post('/waitingroom', function (req, res) {
             //add new worker
             workerRef.push({ 'workerId': workerId,
                              'session': session,
-														 'status':currstatus});
+														 'status':currstatus,
+														 'experience':yearsOfExp});
 
             console.log('WORKER ID: ' + workerId );
             if(session == "single"){
