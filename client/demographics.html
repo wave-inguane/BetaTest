@@ -49,10 +49,8 @@
     </div>
     <div>
 			
-        <label for="yearsExp" class="label">
-            Years of experience programming in javascript
-        </label>
-        <input type="text" name="yearsExp" required="required" id="expYears" size="36"
+        <label for="yearsExp" class="label">Years of experience programming in javascript</label>
+        <input type="text" name="yearsExp" required="required" id="yearsExp" size="36"
                placeholder="Enter string" />
     </div>
     <div>
@@ -70,7 +68,12 @@
 
 <script>
     $('#submitDemographics').click(function() {
-        $('#signup').submit();
+        $('#signup').submit(function(){
+        if ($('#workerID').val() == '') {
+            alert('Please supply a name in the Name field.');
+            return false;
+            }
+        });
     });
     /*
     $('#submitDemos').click(function() {
