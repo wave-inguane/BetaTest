@@ -5,4 +5,15 @@ node_modules
 .idea/libraries/ProgrammingStudies_node_modules.xml
 .idea/ProgrammingStudies.iml
 .idea/workspace.xml
- npm-debug.log
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+pids
+logs
+results
+npm-debug.log

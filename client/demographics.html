@@ -24,59 +24,63 @@
     </style>
 </head>
 <body>
-<!-- SEE PAGE 258 JAVASCRIPT & JQUERY: THE MISS ING MANUAL name="signup" -->
-demographics page
+
 <div class="main-div">
-<form id="signup" action="/waitingroom" method="post" >
+<form id="signup" name="signup" action="/waitingroom" method="post" >
     <div>
-        <label for="username" class="label">Name</label>
-        <input name="username" type="text" id="username" size="36">
+        <label for="workerID" class="label">ParticipantID</label>
+        <input type="text" name="workerID" required="required" id="workerID" size="36"
+               placeholder="Enter string"/>
     </div>
     <div><span class="label">Participation</span>
         <input type="checkbox" name="session" id="single" value="single">
         <label for="single">Single</label>
         <input type="checkbox" name="session" id="group" value="group">
         <label for="group">Group</label>
-
     </div>
     <div>
-        <label for="continent" class="label">Location</label>
-        <select name="continent" id="continent">
-            <option>Europe</option>
-            <option>Africa</option>
-            <option>Asia</option>
-            <option>North America</option>
-            <option>South America</option>
-            <option>Antarctica</option>
-            <option>Australia</option>
+        <label for="currentstatus" class="label">Current status</label>
+        <select name="currentstatus" id="currentstatus">
+            <option value="cs undergrade">CS undergrad</option>
+            <option value="undergrade">Undergrad</option>
+            <option value="grad student">Grad student</option>
+            <option value="professional">Professional</option>
         </select>
     </div>
-    <div class="labelBlock">Would you like to receive feedback from us?
-    </div>
-    <div class="indent">
-        <input type="radio" name="spam" id="yes" value="yes" checked="checked">
-        <label for="yes">Yes</label>
-        <input type="radio" name="spam" id="definitely" value="definitely">
-        <label for="definitely">Definitely</label>
-        <input type="radio" name="spam" id="choice" value="choice">
-        <label for="choice">Do I have a choice?</label>
+    <div>
+        <label for="expYears" class="label">
+            Years of experience programming in javascript
+        </label>
+        <input type="text" name="expYears" required="required" id="expYears" size="36"
+               placeholder="Enter string" />
     </div>
     <div>
-        <button id="submitDemos" class="btn btn-primary">Submit</button>
+        <label for="workExp" class="label">
+            Years of industry experience as software developer, if any (internships, full time positions)
+        </label>
+        <input type="text" name="workExp" required="required"  id="workExp" size="36"
+               placeholder="Enter string"/>
+    </div>
+    <div>
+        <button id="submitDemographics" class="btn btn-primary">Submit</button>
     </div>
 </form>
 </div>
 
 <script>
+    $('#submitDemographics').click(function() {
+        $('#signup').submit();
+    });
+    /*
     $('#submitDemos').click(function() {
         $('#signup').submit(function() {
-            if ($('#username').val() == '') {
+            if ($('#workerID').val() == '') {
                 alert('Please supply a name in the Name field.');
                 return false;
             }
         }); // end submit()
     });
-
+*/
 </script>
 </body>
 </html>

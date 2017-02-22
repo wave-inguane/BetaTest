@@ -13,7 +13,7 @@ var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;             // JSON structure for the next session
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('client'))
+app.use(express.static('client'));
 app.set('port',(process.env.PORT || 5001));
 app.set('views', './views');
 app.set('view engine', 'mustache');
@@ -33,12 +33,19 @@ app.get('/', function(req, res){
     res.sendFile(__dirname+'/client/welcome.html');
 });
 
+//.........................................................................................
 // When a user first hits the study server, first check if they have already participated.
 // If not, send them to the screening test.
+//.........................................................................................
 app.get('/screeningTask', function (req, res) {
-    var workerId = req.query.workerId;
+    //var workerId = req.query.workerId;
+    var workerId = req.body.workerID;
 
-    // Check if there is already data for this worker in Firebase. If there is, the worker has already participated.
+    //TODO: require workerID before screening ?
+    console.log("WORKER ID: " + workerId);
+
+    // Check if there is already data for this worker in Firebase.
+    // If there is, the worker has already participated.
     var workerRef = new Firebase(firebaseStudyURL + '/workers/' + workerId);
     workerRef.once('value', function(snapshot) {
         if (snapshot.val() == null)
@@ -58,23 +65,48 @@ app.get('/screeningTask', function (req, res) {
     });
 });
 
+//.................................................................................................
 // After finishing the screening, check if they passed. If so, send them to the demographics page.
+//.................................................................................................
 app.post('/screenSubmit', function (req, res) {
-    console.log('screening submitted'); 
-    console.log(req.body.question1 + " " + req.body.taskTimeMillis);
+    var taskTime = req.body.taskTimeMillis;
     var result = req.body.question1;
-    if(result == 7)
+
+    console.log('screening submitted'); 
+    console.log(result + " " + taskTime);
+
+    if((result == 7) && (taskTime <= 600000))
         res.sendFile(__dirname + '/client/demographics.html');
     else
         res.sendFile(__dirname + '/client/failedScreening.html');
-
 });
 
-
+//..................................................................................................
 // After finishing the demographics survey, send the user to the waiting room.
+//..................................................................................................
 app.post('/waitingroom', function (req, res) {
-    // TODO: store the demographics data to firebase, associated with the participant. // what specific demographic do we send?
-      res.sendFile(__dirname + '/client/waitingRoom.html');
+     // TODO: store the demographics data to firebase, associated with the participant.
+     var workerId = req.body.workerID;
+     var session = req.body.session.valueOf();
+
+    // Check if there is already data for this worker in Firebase.
+    // If there is, the worker has already participated.
+    var workerRef = new Firebase(firebaseStudyURL + '/workers/' + workerId);
+    workerRef.once('value', function(snapshot) {
+        if (snapshot.val() == null) {
+            //add new worker
+            workerRef.push({ 'workerId': workerId,
+                             'session': session});
+
+            console.log('WORKER ID: ' + workerId );
+            if(session == "single"){
+                console.log('DO TASK');
+                res.sendFile(__dirname + '/client/index_content.html');
+            }else
+            res.sendFile(__dirname + '/client/waitingRoom.html');
+        }
+    });
+
 });
 
 
