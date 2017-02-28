@@ -29,3 +29,23 @@ h2{
 .far-right{
     float: right;
 }
+
+#main_wrap {
+    display: table;
+}
+
+#sidebar {
+    background:pink;
+    min-width: 250px;
+    min-height: 650px;
+    display: table-cell;
+}
+
+#content {
+    background:purple;
+    display:table-cell;
+    /*width: 100%;*/
+    min-width: 1100px;
+
+    min-height: 650px;
+}

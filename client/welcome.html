@@ -12,26 +12,36 @@
 </head>
 <body>
         <div class="main-div">
-
             <h2>Welcome to Programming Studies</h2>
             <br>
-            <p class="readable-font">This work is part of a joint project with researchers at UC Irvine
+            <p>This work is part of a joint project with researchers at UC Irvine
                 and is supported by a $1.4M grant from the National Science Foundation on Crowd Programming.</p>
-            <p class="readable-font">By clicking accept you agree to the terms and conditions to participate in the programming studies.</p>
+            <p>By clicking accept you agree to the terms and conditions to participate in the programming studies.</p>
             <br>
         </div>
         <div class="accept-button">
              <br>
-            <form id="displayTest" action="/screeningTask" method="get">
+            <form id="displayTest" action="/screeningTask" method="post">
                  <button id="acceptTerms" class="btn btn-primary far-right">Accept</button>
             </form>
         </div>
         <!-- -->
         <script>
+            if ($) {
+                $(document).ready(
+                    function() {
+                        $('p').addClass('readable-font');
+                    }
+                );
+            }
+
             $('#acceptTerms').click(function () {
                 $('#displayTest').submit();
+
             });
         </script>
 
 </body>
+
+
 </html>

@@ -17,28 +17,28 @@
             height: 176px;
         }
     </style>
+
 </head>
 <body>
 <div class="main-div">
+
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-1" style="padding-left: 0px; padding-right: 0px">
-        </div>
+        <div class="col-md-1" style="padding-left: 0px; padding-right: 0px"></div>
         <div class="col-md-10" style="padding-left: 0px; padding-right: 0px">
             <div class="bs-callout bs-callout-primary">
                 <h2>Javascript programming task - Screening task</h2>
             </div><BR>
 
-            <form id="mainForm" action="/screenSubmit" method="post">
+            <form id="mainForm" action="/screenSubmitted" method="post">
 
-                <div id="question1Code" class="codeBox">var myObj = {
+                <div id="question1Code" class="codeBox">
+var myObj = {
     "foo" : [1,2,3,4,5],
     "bar" : 5,
     "baz" : 10
 };
-
 go();
-
 function go() {
     console.log(myObj.foo[1] + myObj["bar"]);
 }
@@ -69,7 +69,9 @@ function go() {
         </div>
     </div>
 </div>
+
 </div>
+
 <script>
     var question1Editor = ace.edit("question1Code");
     question1Editor.setTheme("ace/theme/chrome");

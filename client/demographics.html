@@ -26,18 +26,14 @@
 <body>
 
 <div class="main-div">
-<form id="signup" name="signup" action="/waitingroom" method="post" >
+
+<form id="signup" name="signup" action="/demographics" method="post" >
     <div>
         <label for="workerID" class="label">ParticipantID</label>
         <input type="text" name="workerID" required="required" id="workerID" size="36"
                placeholder="Enter string"/>
     </div>
-    <div><span class="label">Participation</span>
-        <input type="checkbox" name="session" id="single" value="single">
-        <label for="single">Single</label>
-        <input type="checkbox" name="session" id="group" value="group">
-        <label for="group">Group</label>
-    </div>
+
     <div>
         <label for="currentstatus" class="label">Current status</label>
         <select name="currentstatus" id="currentstatus">
@@ -54,27 +50,90 @@
                placeholder="Enter string" />
     </div>
     <div>
-        <label for="workExp" class="label">
+        <label for="workDevExp" class="label">
             Years of industry experience as software developer, if any (internships, full time positions)
         </label>
-        <input type="text" name="workExp" required="required"  id="workExp" size="36"
+        <input type="text" name="workDevExp" required="required"  id="workDevExp" size="36"
                placeholder="Enter string"/>
     </div>
     <div>
         <button id="submitDemographics" class="btn btn-primary">Submit</button>
     </div>
 </form>
+
+    <h2></h2><!-- Waiting for participants to join. -->
+
 </div>
 
+
+
+<div id="main_wrap">
+
+    <div id="content">
+        <iframe  id = "frame" src="" width="1100" height="650" scrolling="no" frameborder="0">
+
+        </iframe>
+    </div>
+
+    <div id="sidebar">
+        <p> This is where the instructions would go</p>
+        <button id = "button1" type="button" value = "Next">Next</button>
+
+    </div>
+
+</div>
+
+
 <script>
+
+    $('#main_wrap').hide();
+    //$('#content').hide();
+    //$('#sidebar').hide();
+
     $('#submitDemographics').click(function() {
         $('#signup').submit(function(){
-        if ($('#workerID').val() == '') {
+            var userID =  $('#workerID').val();
+            if (userID == '') {
             alert('Please supply a name in the Name field.');
             return false;
-            }
+            }else{
+
+             $('#signup').hide(); //hide the form
+             $('h2').text("Waiting for participants to join.");
+
+            console.log( "\nI am here\n");
+            var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');
+
+            // Add an entry to the waitlist to start waiting for a session to be assigned.
+            var waitEntryRef = waitListRef.push({ "workerId": userID});
+
+            // If we disconnect before we get assigned a room, remove us from the waiting list.
+             waitEntryRef.onDisconnect().set(null);
+
+
+            // TODO: we want to watch only for changes to the entry for this element, not all changes.
+
+
+            // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
+            // does, join the session.
+            waitEntryRef.on("child_added", function(snapshot) {
+                var key = snapshot.key();
+                if (key == 'sessionURL') {
+                    // Navigate to the server session URL, making sure to disable the back button for this URL
+                    // (don't want participant joining another session later).
+                    window.location.replace(snapshot.val());
+
+                    console.log("URL : " + snapshot.val());
+                   // $('.main-div').hide();
+                    //$('#main_wrap').show();
+
+                    //$('#frame').attr('src',snapshot.val());
+                }
+            });
+        }
         });
     });
+
 </script>
 </body>
 </html>
