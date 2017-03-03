@@ -113,9 +113,10 @@
                         // Navigate to the server session URL, making sure to disable the back button for this URL
                         // (don't want participant joining another session later).
 
-                        //window.location.replace(snapshot.val());
+                        window.location.replace(snapshot.val());
                         //console.log("URL : " + snapshot.val());
 
+                        /*
                         $('.main-div').hide();
                         $('#main_wrap').show();
                         $('#content').show();
@@ -123,6 +124,7 @@
 
                         $('#frame').attr('src',snapshot.val());
                         waitEntryRef.set(null);
+                        */
                     }
                 });
             }
