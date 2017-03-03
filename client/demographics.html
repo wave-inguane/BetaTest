@@ -116,17 +116,13 @@
                         //window.location.replace(snapshot.val());
                         //console.log("URL : " + snapshot.val());
 
-
                         $('.main-div').hide();
                         $('#main_wrap').show();
                         $('#content').show();
                         $('#sidebar').show();
 
                         $('#frame').attr('src',snapshot.val());
-
-                        //the session is full
                         waitEntryRef.set(null);
-
                     }
                 });
             }
