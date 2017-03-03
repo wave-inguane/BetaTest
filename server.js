@@ -1,6 +1,6 @@
 /**
  * Created by tlatoza on 11/23/15.
- * updated by Wave Inguane on 02/20/2017.
+ * updated by Wave Inguane on 03/03/2017.
  */
 "use strict";
 
@@ -9,9 +9,10 @@ var app = express();
 var bodyParser = require('body-parser');
 var Firebase = require("firebase");
 var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1';
-var pastebinURL = 'https://seecoderun.firebaseapp.com/#:-';//'https://seecode.run/#:-';//
+var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;             // JSON structure for the next session
 var screenTaskTime;          //time spent on screening task
+var sessions = {};
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('client'));
@@ -53,7 +54,7 @@ app.post('/screenSubmitted', function (req, res) {
     screenTaskTime = req.body.taskTimeMillis;
     var result = req.body.question1;
 
-    console.log('screening submitted'); 
+    console.log('screening submitted');
     console.log(result + " " + screenTaskTime);
 
     if(result == 7) {
@@ -67,12 +68,12 @@ app.post('/screenSubmitted', function (req, res) {
 // After finishing the demographics survey, send the user to the waiting room.
 //..................................................................................................
 app.post('/demographics', function (req, res) {
-     // TODO: store the demographics data to firebase, associated with the participant.
+    // TODO: store the demographics data to firebase, associated with the participant.
     //DONE
-     var workerId = req.body.workerID;
-     var currstatus = req.body.currentstatus;
-     var yearsOfProgramExp = req.body.yearsExp; //just programming experience
-     var yearsOfDevExp = req.body.workDevExp; //professional experience
+    var workerId = req.body.workerID;
+    var currstatus = req.body.currentstatus;
+    var yearsOfProgramExp = req.body.yearsExp; //just programming experience
+    var yearsOfDevExp = req.body.workDevExp; //professional experience
 
     // Check if there is already data for this worker in Firebase.
     // If there is, the worker has already participated.
@@ -103,13 +104,63 @@ var server = app.listen(app.get('port'), function () {
     var host = server.address().address;
     var port = server.address().port;
 
-    if (nextSession == null)
+    if (nextSession == null) //SETUP FOR TESTING
         createWorkflows();
 
-        firebaseSetup();
+    firebaseSetup();
 
     console.log('http://localhost:' + port + '/');
 });
+
+
+
+//..............................................................................................
+// Create the workflows on Firebase and the corresponding initial sessions for each workflow.
+//..............................................................................................
+function createWorkflows()
+{
+    var totalWorkflowCount = 2;
+
+    var workflows = {};
+    //var sessions = {};//moved to global field area
+
+    // Create a JSON object for each workflow and a corresponding first session for each workflow
+    for (var i=0; i < totalWorkflowCount; i++) {
+
+        var workflow = {};
+        workflow.workflowURL = pastebinURL + 'workflowXYZ' + i;
+        workflow.timeLimitMins = 10;
+        workflow.participantsPerSession = 3;
+        workflow.totalSessions = 2;//1
+        var workflowID = i;
+        workflows[workflowID] = workflow;
+
+        var session = {};
+        session.sessionID = i;
+        session.workflowID = i;
+        session.workflowURL = workflow.workflowURL;
+        session.timeLimitMins = workflow.timeLimitMins;
+        session.totalParticipants =  workflow.participantsPerSession;
+        sessions[workflowID] = session;
+    }
+
+    // Create the initial status, setting up the first session and the current total number of sessions.
+    var status = {};
+    status.nextSessionID = 0;
+    status.totalSessions = totalWorkflowCount;
+
+    var workflowsRef = new Firebase(firebaseStudyURL + '/workflows');
+    workflowsRef.set(workflows);
+
+    var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
+    sessionsRef.set(sessions);
+
+    var statusRef = new Firebase(firebaseStudyURL + '/status');
+    statusRef.set(status);
+
+    nextSession = sessions[0];
+}
+
 
 //............................................................................................
 // Create wait list
@@ -147,51 +198,6 @@ function firebaseSetup()
     });
 }
 
-//..............................................................................................
-// Create the workflows on Firebase and the corresponding initial sessions for each workflow.
-//..............................................................................................
-function createWorkflows()
-{
-    var totalWorkflowCount = 2;
-
-    var workflows = {};
-    var sessions = {};
-
-    // Create a JSON object for each workflow and a corresponding first session for each workflow
-    for (var i=0; i < totalWorkflowCount; i++) {
-        var workflow = {};
-        workflow.workflowURL = pastebinURL + 'workflowAAAA' + i;
-        workflow.timeLimitMins = 10;
-        workflow.participantsPerSession = 3;
-        workflow.totalSessions = 1;
-        var workflowID = i;
-        workflows[workflowID] = workflow;
-
-        var session = {};
-        session.sessionID = i;
-        session.workflowID = i;
-        session.workflowURL = workflow.workflowURL;
-        session.timeLimitMins = workflow.timeLimitMins;
-        session.totalParticipants =  workflow.participantsPerSession;
-        sessions[workflowID] = session;
-    }
-
-    // Create the initial status, setting up the first session and the current total number of sessions.
-    var status = {};
-    status.nextSessionID = 0;
-    status.totalSessions = totalWorkflowCount;
-
-    var workflowsRef = new Firebase(firebaseStudyURL + '/workflows');
-    workflowsRef.set(workflows);
-
-    var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
-    sessionsRef.set(sessions);
-
-    var statusRef = new Firebase(firebaseStudyURL + '/status');
-    statusRef.set(status);
-
-    nextSession = sessions[0];
-}
 
 //.......................................................................
 // Starts the corresponding session.
@@ -207,6 +213,7 @@ function startSession(session, waitlistSnapshot)
         {
             var status = snapshot.val();
             nextSessionId = status.nextSessionID;
+            console.log("NEXT SESSION: "+ nextSessionId);
 
             // Build the list of IDs for the workers who will be working on this session.
             var workers = {};
@@ -215,12 +222,12 @@ function startSession(session, waitlistSnapshot)
                 workers[i] = waitlistEntrySnapshot.val().workerId;
                 i++;
 
-                console.log("SESSION "+ nextSessionId);
-
                 // If we've selected all of the participants, break.
                 if (i >= session.totalParticipants)
                     return true;    // break
             });
+
+
 
             // Record the start time and workers for the session.
             var date = new Date();
@@ -228,8 +235,10 @@ function startSession(session, waitlistSnapshot)
             session.startTimeMillis = date.getTime();
             session.workers = workers;
             session.sessionID = nextSessionId;
-           var sessionRef = new Firebase(firebaseStudyURL + '/sessions/' + session.sessionID);
-           // var sessionRef = new Firebase(firebaseStudyURL + '/sessions/' + nextSessionId);
+            session.workflowID = nextSessionId;
+            session.workflowURL = sessions[nextSessionId].workflowURL;
+
+            var sessionRef = new Firebase(firebaseStudyURL + '/sessions/' + session.sessionID);
             sessionRef.set(session);
 
             // Increment the next session to be started.
@@ -254,7 +263,7 @@ function startSession(session, waitlistSnapshot)
                 if (i >= session.totalParticipants)
                     return true;    // break
             });
-             
+
 
             // TODO: Set a timeout to be able to end the session when the time is up
             //set a timer, end it even if submit is not clicked
@@ -264,11 +273,11 @@ function startSession(session, waitlistSnapshot)
 }
 
 // To be called when a session has been finished.
-function sessionCompleted(sessionID) // update Firebase 
+function sessionCompleted(sessionID) // update Firebase
 {
-    // Add the sessionID that was just finished --> Add to where? Firebase? Or should I create another array? 
+    // Add the sessionID that was just finished --> Add to where? Firebase? Or should I create another array?
     // Check the corresponding workflow to see if there are more sessions for this workflow. If so,
-    // create a new session and add it to the end of the session list. // use  if (sessions[workflowID]) == 0? in another function 
+    // create a new session and add it to the end of the session list. // use  if (sessions[workflowID]) == 0? in another function
     // Remove this session from status.activeSessions --> Firebase
     // Each worker should set its logged out time when it leaves session.
     //
