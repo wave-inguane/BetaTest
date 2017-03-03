@@ -11,8 +11,8 @@ var Firebase = require("firebase");
 var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1';
 var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;             // JSON structure for the next session
-var screenTaskTime;          //time spent on screening task
 var sessions = {};
+var screenTaskTime;          //time spent on screening task
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('client'));
@@ -123,6 +123,7 @@ function createWorkflows()
 
     var workflows = {};
     //var sessions = {};//moved to global field area
+
 
     // Create a JSON object for each workflow and a corresponding first session for each workflow
     for (var i=0; i < totalWorkflowCount; i++) {
