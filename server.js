@@ -236,7 +236,7 @@ function startSession(session, waitlistSnapshot)
             session.workers = workers;
             session.sessionID = nextSessionId;
             session.workflowID = nextSessionId;
-            session.workflowURL = sessions[nextSessionId].workflowURL;
+            session.workflowURL = sessions[session.sessionID].workflowURL;
 
             var sessionRef = new Firebase(firebaseStudyURL + '/sessions/' + session.sessionID);
             sessionRef.set(session);
