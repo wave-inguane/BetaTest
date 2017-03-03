@@ -67,7 +67,10 @@ app.post('/screenSubmitted', function (req, res) {
 //..................................................................................................
 // After finishing the demographics survey, send the user to the waiting room.
 //..................................................................................................
-app.post('/demographics', function (req, res) {
+app.post('/waitingRoom', function (req, res) {
+
+
+    //app.post('/demographics', function (req, res) {
     // TODO: store the demographics data to firebase, associated with the participant.
     //DONE
     var workerId = req.body.workerID;
@@ -78,7 +81,7 @@ app.post('/demographics', function (req, res) {
     // Check if there is already data for this worker in Firebase.
     // If there is, the worker has already participated.
     var workerRef = new Firebase(firebaseStudyURL + '/workers/' + workerId);
-    workerRef.once('value', function(snapshot) {
+    workerRef.once('value', function (snapshot) {
         if (snapshot.val() == null) {
             //add new worker
             workerRef.push({
@@ -88,16 +91,17 @@ app.post('/demographics', function (req, res) {
                 'developerExp': yearsOfDevExp,
                 'screenTime': screenTaskTime + " ms"
             });
-            //reset
-            screenTaskTime = null;
-
-            console.log('WORKER ID: ' + workerId);
-
         }
+    });
+    //reset
+    screenTaskTime = null;
+    console.log('WORKER ID: ' + workerId);
+    req.setTimeout(86400000, function () {
+       req.abort();
+        console.log("display after 24 hours");
     });
 
 });
-
 
 // Start the server.
 var server = app.listen(app.get('port'), function () {
@@ -111,7 +115,6 @@ var server = app.listen(app.get('port'), function () {
 
     console.log('http://localhost:' + port + '/');
 });
-
 
 
 //..............................................................................................
@@ -283,3 +286,4 @@ function sessionCompleted(sessionID) // update Firebase
     // Each worker should set its logged out time when it leaves session.
     //
 }
+

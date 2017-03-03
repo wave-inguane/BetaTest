@@ -1,3 +1,5 @@
+
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +21,9 @@
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
 
-<!--
+
 <script>
+
     // Utility function to get URL parameter.
     // From http://stackoverflow.com/questions/19491336/get-url-parameter-jquery
     var getUrlParameter = function getUrlParameter(sParam) {
@@ -37,14 +40,13 @@
         }
     };
 
-
     var userID =  getUrlParameter('workerID');
     console.log("userID = " + userID);
 
     var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');
 
     // Add an entry to the waitlist to start waiting for a session to be assigned.
-    var waitEntryRef = waitListRef.push({ "workerId": userID });
+    var waitEntryRef = waitListRef.push({ "workerId": userID});
 
     // If we disconnect before we get assigned a room, remove us from the waiting list.
     waitEntryRef.onDisconnect().set(null);
@@ -64,8 +66,6 @@
         }
     });
 
-
 </script>
--->
-
 </html>
+-->
