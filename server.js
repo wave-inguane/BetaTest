@@ -119,7 +119,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 2;
+    var totalWorkflowCount = 7;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -132,7 +132,7 @@ function createWorkflows()
         workflow.workflowURL = pastebinURL + 'workflowXYZ' + i;
         workflow.timeLimitMins = 10;
         workflow.participantsPerSession = 3;
-        workflow.totalSessions = 2;//1
+        workflow.totalSessions = 1;//1
         var workflowID = i;
         workflows[workflowID] = workflow;
 
