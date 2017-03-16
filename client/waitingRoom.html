@@ -14,26 +14,32 @@
 <div class="main-div">
     <h2>Waiting for participants to join.</h2>
 </div>
-<!--  SEARCH TRACKER -->
+<!--  https://api.jquery.com/remove/ -->
 <!-- <p id="tracking"></p> -->
 
-<div id="main_wrap">
-    <div id="content">
-        <iframe  id = "frame" src="" width="1100" height="650" scrolling="no" frameborder="0">
+<div id="mainwrap">
+    <!--<div id="content">-->
+        <iframe  id = "frame" src="" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
 
         </iframe>
-    </div>
-
-    <div id="sidebar">
-        <p> This is where the instructions would go</p>
-        <button id = "button1" type="button" value = "Next">Next</button>
-
-    </div>
+    <!--
 </div>
+<div id="sidebar">
+-->
+        <iframe  id = "sideFrame" src="" width="100%" style="height: 20vh;" scrolling="no" frameborder="0">
+
+        </iframe>
+
+        <!--<p> This is where the instructions would go</p>-->
+
+        <button id = "button1"  class="btn btn-primary far-right" type="button" value = "Next">Next</button>
+
+    </div>
+<!--</div>-->
 </body>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
 <script>
     /**
     // Utility function to get URL parameter.
@@ -53,23 +59,10 @@
     };
 */
 
-
-    var locations2 = ["instructions1.html", "instructions2.html"];
-    var currentIndex = 0;
-
-    var len2 = locations2.length;
-    $(document).ready(function(){
-        $('#button1').click(function() {
-            currentIndex = this.value == "Next" ?
-                    currentIndex < len2 - 1 ? ++currentIndex : 0 : currentIndex > 0 ? --currentIndex : len2 - 1;
-            $('#sideFrame').attr('src', locations2[currentIndex]);
-        });
-    });
-
-
-
-
-    $('#main_wrap').hide();
+    $('#frame').hide();
+    $('#sideFrame').hide();
+    $('#mainwrap').hide();
+    $('#sidebar').hide();
     var waiting = localStorage.getItem("candidate");
     if(waiting != null) {
         var workerPresent = JSON.parse(waiting);
@@ -100,12 +93,36 @@
             //window.location.replace(snapshot.val());
             $('#frame').attr('src', snapshot.val());
             $('.main-div').hide();
-            $('#main_wrap').show();
+            $('h2').remove();
+            $('#frame').show();
+            $('#mainwrap').show();
+            $('#sidebar').show();
+            $('#sideFrame').show();
             waitEntryRef.set(null);
         }
     });
-
-
 </script>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script>
+    //var locations = ["welcome.html", "successCreatingWorkflows.html", "demographics.html","screening.html"];
+    var locations = ["instructions1.html", "instructions2.html"];
+    var currentIndex = 0;
+    var len = locations.length;
+    //var len2 = locations2.length;
+    $(document).ready(function(){
+        $('#button1').click(function() {
+            currentIndex = this.value == "Next" ?
+                    currentIndex < len - 1 ? ++currentIndex : 0 :
+                    //changed from a colon to a semicolon
+                    currentIndex > 0 ? --currentIndex : len - 1;
+            //currentIndex > 0 ? --currentIndex : len2 - 1;
+
+            //$('#frame').attr('src', locations[currentIndex]);
+            $('#sideFrame').attr('src', locations[currentIndex]);
+        });
+    });
+</script>
+
 
 </html>
