@@ -16,7 +16,7 @@ var screenTaskTime;          //time spent on screening task
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('client'));
-app.set('port',(process.env.PORT || 5001));
+app.set('port',(process.env.PORT || 8888));
 //app.set('views', './views');
 //app.set('view engine', 'mustache');
 
@@ -40,7 +40,7 @@ app.get('/', function(req, res){
 // If not, send them to the screening test.
 //.........................................................................................
 
-app.post('/screeningTask', function (req, res) {
+app.post('/screening_task', function (req, res) {
 
     res.sendFile(__dirname + '/client/screening.html');
     // res.sendFile(__dirname + '/client/alreadyParticipated.html');
@@ -50,7 +50,7 @@ app.post('/screeningTask', function (req, res) {
 //.................................................................................................
 // After finishing the screening, check if they passed. If so, send them to the demographics page.
 //.................................................................................................
-app.post('/screenSubmitted', function (req, res) {
+app.post('/screen_submitted', function (req, res) {
     screenTaskTime = req.body.taskTimeMillis;
     var result = req.body.question1;
 
@@ -67,10 +67,7 @@ app.post('/screenSubmitted', function (req, res) {
 //..................................................................................................
 // After finishing the demographics survey, send the user to the waiting room.
 //..................................................................................................
-app.post('/waitingRoom', function (req, res) {
-
-
-    //app.post('/demographics', function (req, res) {
+app.post('/waiting_room', function (req, res) {
     // TODO: store the demographics data to firebase, associated with the participant.
     //DONE
     var workerId = req.body.workerID;
@@ -81,7 +78,7 @@ app.post('/waitingRoom', function (req, res) {
     // Check if there is already data for this worker in Firebase.
     // If there is, the worker has already participated.
     var workerRef = new Firebase(firebaseStudyURL + '/workers/' + workerId);
-    workerRef.once('value', function (snapshot) {
+    workerRef.once('value', function(snapshot) {
         if (snapshot.val() == null) {
             //add new worker
             workerRef.push({
@@ -93,15 +90,20 @@ app.post('/waitingRoom', function (req, res) {
             });
         }
     });
+
+    res.sendFile(__dirname + '/client/waitingRoom.html');
+    /*
     //reset
     screenTaskTime = null;
+
     console.log('WORKER ID: ' + workerId);
     req.setTimeout(86400000, function () {
-       req.abort();
+        req.abort();
         console.log("display after 24 hours");
     });
-
+    */
 });
+
 
 // Start the server.
 var server = app.listen(app.get('port'), function () {
@@ -117,12 +119,13 @@ var server = app.listen(app.get('port'), function () {
 });
 
 
+
 //..............................................................................................
 // Create the workflows on Firebase and the corresponding initial sessions for each workflow.
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 7;
+    var totalWorkflowCount = 2;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -134,7 +137,7 @@ function createWorkflows()
         var workflow = {};
         workflow.workflowURL = pastebinURL + 'workflowXYZ' + i;
         workflow.timeLimitMins = 10;
-        workflow.participantsPerSession = 3;
+        workflow.participantsPerSession = 2;
         workflow.totalSessions = 1;
         var workflowID = i;
         workflows[workflowID] = workflow;
@@ -286,4 +289,3 @@ function sessionCompleted(sessionID) // update Firebase
     // Each worker should set its logged out time when it leaves session.
     //
 }
-

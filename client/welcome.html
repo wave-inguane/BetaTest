@@ -8,10 +8,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+
    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-        <div class="main-div">
+
+<!--welcome--------------------------------------------------------->
+
+    <div class="main-div">
             <h2>Welcome to Programming Studies</h2>
             <br>
             <p>This work is part of a joint project with researchers at UC Irvine
@@ -21,27 +25,88 @@
         </div>
         <div class="accept-button">
              <br>
-            <form id="displayTest" action="/screeningTask" method="post">
-                 <button id="acceptTerms" class="btn btn-primary far-right">Accept</button>
+            <form id="display_test" action="/screening_task" method="post">
+                 <button id="accept_terms" class="btn btn-primary far-right">Accept</button>
             </form>
-        </div>
-        <!-- -->
+    </div>
+
+<!--End welcome div ---->
+
         <script>
-            if ($) {
-                $(document).ready(
-                    function() {
-                        $('p').addClass('readable-font');
-                    }
-                );
-            }
-
-            $('#acceptTerms').click(function () {
-                $('#displayTest').submit();
-
+//--------------------------------------------------------------------
+// Script
+//--------------------------------------------------------------------
+//Handle welcome div
+if ($) {
+    $(document).ready(
+            function() {
+                $('p').addClass('readable-font');
             });
+    }
+        $('#accept_terms').click(function () {
+           $('#display_test').submit();
+        });
+
+            //Handle screening div
+
+
+/**
+<!-- screening div-------------------------------------------------->
+<div id="screening">
+
+        </div>
+        <!--End  screening div ---->
+
+<!-- failed screening  div------------------------------------------>
+<div id="failed_screening">
+
+        </div>
+        <!--End failed screening div ---->
+
+
+<!-- demographics div----------------------------------------------->
+<div id="demographics">
+
+        </div>
+        <!--End  demographics div ---->
+
+<!-- waiting div--------------------------------------------------->
+<div id="waiting">
+
+        </div>
+        <!--End waiting  div ---->
+
+<!-- task div------------------------------------------------------->
+<div id="task">
+
+        </div>
+        <!--End  task div ---->
+
+<!-- already participated   div------------------------------------->
+<div id="already_participated">
+
+        </div>
+        <!--End  already participated div ---->
+
+<!--  instruction1div----------------------------------------------->
+<div id="instructions1">
+
+        </div>
+        <!--End instr 1 div ---->
+<div id="instructions2">
+
+        </div>
+        <!--  instruction 2 div---------------------------------------------->
+
+<!--End instr 2 div ---->
+*/
+
+
+//---------------
+//End script
+//---------------
         </script>
 
 </body>
-
-
 </html>
+

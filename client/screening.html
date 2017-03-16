@@ -21,55 +21,53 @@
 </head>
 <body>
 <div class="main-div">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-1" style="padding-left: 0px; padding-right: 0px"></div>
+            <div class="col-md-10" style="padding-left: 0px; padding-right: 0px">
+                <div class="bs-callout bs-callout-primary">
+                    <h2>Javascript programming task - Screening task</h2>
+                </div><BR>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-1" style="padding-left: 0px; padding-right: 0px"></div>
-        <div class="col-md-10" style="padding-left: 0px; padding-right: 0px">
-            <div class="bs-callout bs-callout-primary">
-                <h2>Javascript programming task - Screening task</h2>
-            </div><BR>
+                <form id="mainForm" action="/screen_submitted" method="post">
 
-            <form id="mainForm" action="/screenSubmitted" method="post">
+                    <div id="question1Code" class="codeBox">
+                        var myObj = {
+                        "foo" : [1,2,3,4,5],
+                        "bar" : 5,
+                        "baz" : 10
+                        };
+                        go();
+                        function go() {
+                        console.log(myObj.foo[1] + myObj["bar"]);
+                        }
+                    </div>
+                    <BR>What is the value printed to the console in the program above?
+                    <fieldset>
+                        <input type="radio" name="question1" value="[1,2,3,4,5]" /> [1,2,3,4,5]<br />
+                        <input type="radio" name="question1" value="[1,2,3,4,5,5]" /> [1,2,3,4,5,5]<br />
+                        <input type="radio" name="question1" value="0" /> 0<br />
+                        <input type="radio" name="question1" value="2" /> 2<br />
+                        <input type="radio" name="question1" value="3" /> 3<br />
+                        <input type="radio" name="question1" value="4" /> 4<br />
+                        <input type="radio" name="question1" value="6" /> 6<br />
+                        <input type="radio" name="question1" value="7" /> 7<br />
+                        <input type="radio" name="question1" value="10" /> 10<br />
+                        <input type="radio" name="question1" value="12" /> 12<br />
+                        <input type="radio" name="question1" value="15" /> 15<br />
+                    </fieldset>
 
-                <div id="question1Code" class="codeBox">
-var myObj = {
-    "foo" : [1,2,3,4,5],
-    "bar" : 5,
-    "baz" : 10
-};
-go();
-function go() {
-    console.log(myObj.foo[1] + myObj["bar"]);
-}
-                </div>
-                <BR>What is the value printed to the console in the program above?
-                <fieldset>
-                    <input type="radio" name="question1" value="[1,2,3,4,5]" /> [1,2,3,4,5]<br />
-                    <input type="radio" name="question1" value="[1,2,3,4,5,5]" /> [1,2,3,4,5,5]<br />
-                    <input type="radio" name="question1" value="0" /> 0<br />
-                    <input type="radio" name="question1" value="2" /> 2<br />
-                    <input type="radio" name="question1" value="3" /> 3<br />
-                    <input type="radio" name="question1" value="4" /> 4<br />
-                    <input type="radio" name="question1" value="6" /> 6<br />
-                    <input type="radio" name="question1" value="7" /> 7<br />
-                    <input type="radio" name="question1" value="10" /> 10<br />
-                    <input type="radio" name="question1" value="12" /> 12<br />
-                    <input type="radio" name="question1" value="15" /> 15<br />
-                </fieldset>
+                    <input type="hidden" name="taskTimeMillis" id="taskTimeMillis"/>
 
-                <input type="hidden" name="taskTimeMillis" id="taskTimeMillis"/>
+                    <br><br><button id="submitPage" class="btn btn-primary">Submit</button>
 
-                <br><br><button id="submitPage" class="btn btn-primary">Submit</button>
+                </form>
 
-            </form>
-
-        </div>
-        <div class="col-md-1" style="padding-left:0px; padding-right: 0px">
+            </div>
+            <div class="col-md-1" style="padding-left:0px; padding-right: 0px">
+            </div>
         </div>
     </div>
-</div>
-
 </div>
 
 <script>

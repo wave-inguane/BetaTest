@@ -27,7 +27,7 @@
 
 <div class="main-div">
 
-    <form id="signup" name="signup" action="/waitingRoom" method="post" >
+    <form id="signup" name="signup" action="/waiting_room" method="post" >
         <div>
             <label for="workerID" class="label">ParticipantID</label>
             <input type="text" name="workerID" required="required" id="workerID" size="36"
@@ -62,24 +62,54 @@
     </form>
 
     <h2></h2><!-- Waiting for participants to join. -->
+    <!--  SEARCH TRACKER -->
+    <p id="tracking"></p>
+
 </div>
+
+
 
 <div id="main_wrap">
     <div id="content">
         <iframe  id = "frame" src="" width="1100" height="650" scrolling="no" frameborder="0">
+
         </iframe>
     </div>
+
     <div id="sidebar">
         <p> This is where the instructions would go</p>
         <button id = "button1" type="button" value = "Next">Next</button>
+
     </div>
 </div>
+
 
 <script>
 
     $('#main_wrap').hide();
-    //$('#content').hide();
-   // $('#sidebar').hide();
+    $('#content').hide();
+    $('#sidebar').hide();
+
+    $('#submitDemographics').click(function() {
+        $('#signup').submit(function(){
+            var userID =  $('#workerID').val();
+            if (userID == '') {
+                alert('Please supply a name in the Name field.');
+                return false;
+            }else{
+                //save to local storage
+                resetStage();
+                stageCandidate();
+            }
+        });
+    });
+
+
+
+/**
+    $('#main_wrap').hide();
+    $('#content').hide();
+    $('#sidebar').hide();
 
     $('#submitDemographics').click(function() {
         $('#signup').submit(function(){
@@ -112,24 +142,93 @@
                     if (key == 'sessionURL') {
                         // Navigate to the server session URL, making sure to disable the back button for this URL
                         // (don't want participant joining another session later).
-                        window.location.replace(snapshot.val());
-                        //console.log("URL : " + snapshot.val());
 
-                        /*
+                        //window.location.replace(snapshot.val());
+
                         $('.main-div').hide();
                         $('#main_wrap').show();
                         $('#content').show();
                         $('#sidebar').show();
 
                         $('#frame').attr('src',snapshot.val());
-                        waitEntryRef.set(null);
-                        */
+                        waitEntryRef.set(null); //clear wait list
                     }
                 });
             }
         });
     });
-
+*/
 </script>
+
+<script>
+    //TODO: make all variable generic
+    //used for item search
+    var candidateStage = [ ];
+    var countTracker= [ ];
+    var index;
+
+    //------------------------------------------------
+    // use this function to reset state
+    //------------------------------------------------
+    function resetStage(){
+        localStorage.removeItem("candidate");
+       // localStorage.removeItem("numOfSearches");
+    }
+
+    function stageCandidate(){
+
+        var display = document.getElementById("tracking");
+        //resetGameTracker();
+        if(typeof(Storage) !== "undefined") {
+
+            var candidateId = $("#workerID").val();
+
+            var curr_name = candidateId;
+            function findGame(element) {
+                return element == curr_name;
+            }
+            // storing our arrays as a strings
+            // initialize storage
+            if(localStorage.getItem("candidate") == null){
+                localStorage.setItem("candidate", JSON.stringify(candidateStage));
+               // localStorage.setItem("numOfSearches", JSON.stringify(countTracker));
+            }
+
+            // retrieving our data and converting it back into an array
+            var  presentCandidate = localStorage.getItem("candidate");
+           // timesSearched = localStorage.getItem("numOfSearches");
+            if(presentCandidate != null){
+                candidateStage = JSON.parse(presentCandidate);
+               // countTracker = JSON.parse(timesSearched);
+
+                index = candidateStage.findIndex(findGame);
+                if(index == -1){ //if not tracked
+                    candidateStage.push(curr_name);
+                   // countTracker.push(1);
+                    localStorage.setItem("candidate", JSON.stringify(candidateStage));
+                    //localStorage.setItem("numOfSearches", JSON.stringify(countTracker));
+                    display.innerHTML = curr_name+ " searched: " +1+" "+ "times"+"<br />";
+
+                }else{// inc count
+                    //countTracker[index] = countTracker[index] + 1;
+                   // localStorage.setItem("numOfSearches", JSON.stringify(countTracker));
+                }
+            }
+
+            if( typeof(candidateStage[index]) == "undefined"){
+                candidateStage[index]  = 0;
+                //countTracker[index] = 0;
+            }else if(candidateStage[index] == 0){
+                display.innerHTML = "first time searched "+"<br />";
+            }else{
+                display.innerHTML = candidateStage[index]+"<br />";
+            }
+
+        } else {
+            display.innerHTML = "Sorry, your browser does not support web storage...";
+        }
+    }
+</script>
+
 </body>
 </html>

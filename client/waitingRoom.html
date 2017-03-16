@@ -1,10 +1,8 @@
-
-<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<title>Programming studies</title>
+    <title>Programming studies</title>
     <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -16,6 +14,8 @@
 <div class="main-div">
     <h2>Waiting for participants to join.</h2>
 </div>
+<!--  SEARCH TRACKER -->
+<p id="tracking"></p>
 </body>
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -23,7 +23,7 @@
 
 
 <script>
-
+    /**
     // Utility function to get URL parameter.
     // From http://stackoverflow.com/questions/19491336/get-url-parameter-jquery
     var getUrlParameter = function getUrlParameter(sParam) {
@@ -39,14 +39,20 @@
             }
         }
     };
+*/
 
-    var userID =  getUrlParameter('workerID');
-    console.log("userID = " + userID);
+
+    var waiting = localStorage.getItem("candidate");
+    if(waiting != null) {
+        var workerPresent = JSON.parse(waiting);
+    }
+    var id =  workerPresent[0];//getUrlParameter('workerID');
+    console.log("userID = " + id);//DEBUG
 
     var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');
 
     // Add an entry to the waitlist to start waiting for a session to be assigned.
-    var waitEntryRef = waitListRef.push({ "workerId": userID});
+    var waitEntryRef = waitListRef.push({ "workerId": id});
 
     // If we disconnect before we get assigned a room, remove us from the waiting list.
     waitEntryRef.onDisconnect().set(null);
@@ -66,6 +72,8 @@
         }
     });
 
+
 </script>
+
+
 </html>
--->
