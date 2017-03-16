@@ -53,6 +53,22 @@
     };
 */
 
+
+    var locations2 = ["instructions1.html", "instructions2.html"];
+    var currentIndex = 0;
+
+    var len2 = locations2.length;
+    $(document).ready(function(){
+        $('#button1').click(function() {
+            currentIndex = this.value == "Next" ?
+                    currentIndex < len2 - 1 ? ++currentIndex : 0 : currentIndex > 0 ? --currentIndex : len2 - 1;
+            $('#sideFrame').attr('src', locations2[currentIndex]);
+        });
+    });
+
+
+
+
     $('#main_wrap').hide();
     var waiting = localStorage.getItem("candidate");
     if(waiting != null) {
@@ -82,24 +98,14 @@
             // (don't want participant joining another session later).
 
             //window.location.replace(snapshot.val());
+            $('#frame').attr('src', snapshot.val());
             $('.main-div').hide();
             $('#main_wrap').show();
-            $('#frame').attr('src', snapshot.val());
+            waitEntryRef.set(null);
         }
     });
+
+
 </script>
 
-<script>
-    var locations2 = ["instructions1.html", "instructions2.html"];
-    var currentIndex = 0;
-
-    var len2 = locations2.length;
-    $(document).ready(function(){
-        $('#button1').click(function() {
-            currentIndex = this.value == "Next" ?
-                    currentIndex < len2 - 1 ? ++currentIndex : 0 : currentIndex > 0 ? --currentIndex : len2 - 1;
-            $('#sideFrame').attr('src', locations2[currentIndex]);
-        });
-    });
-</script>
 </html>
