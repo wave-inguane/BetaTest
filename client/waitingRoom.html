@@ -15,13 +15,25 @@
     <h2>Waiting for participants to join.</h2>
 </div>
 <!--  SEARCH TRACKER -->
-<p id="tracking"></p>
+<!-- <p id="tracking"></p> -->
+
+<div id="main_wrap">
+    <div id="content">
+        <iframe  id = "frame" src="" width="1100" height="650" scrolling="no" frameborder="0">
+
+        </iframe>
+    </div>
+
+    <div id="sidebar">
+        <p> This is where the instructions would go</p>
+        <button id = "button1" type="button" value = "Next">Next</button>
+
+    </div>
+</div>
 </body>
 
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
-
-
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
 <script>
     /**
     // Utility function to get URL parameter.
@@ -41,7 +53,7 @@
     };
 */
 
-
+    $('#main_wrap').hide();
     var waiting = localStorage.getItem("candidate");
     if(waiting != null) {
         var workerPresent = JSON.parse(waiting);
@@ -68,12 +80,26 @@
         if (key == 'sessionURL') {
             // Navigate to the server session URL, making sure to disable the back button for this URL
             // (don't want participant joining another session later).
-            window.location.replace(snapshot.val());
+
+            //window.location.replace(snapshot.val());
+            $('.main-div').hide();
+            $('#main_wrap').show();
+            $('#frame').attr('src', snapshot.val());
         }
     });
-
-
 </script>
 
+<script>
+    var locations2 = ["instructions1.html", "instructions2.html"];
+    var currentIndex = 0;
 
+    var len2 = locations2.length;
+    $(document).ready(function(){
+        $('#button1').click(function() {
+            currentIndex = this.value == "Next" ?
+                    currentIndex < len2 - 1 ? ++currentIndex : 0 : currentIndex > 0 ? --currentIndex : len2 - 1;
+            $('#sideFrame').attr('src', locations2[currentIndex]);
+        });
+    });
+</script>
 </html>

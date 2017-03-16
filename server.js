@@ -125,7 +125,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 2;
+    var totalWorkflowCount = 7;
 
     var workflows = {};
     //var sessions = {};//moved to global field area

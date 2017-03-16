@@ -61,34 +61,17 @@
         </div>
     </form>
 
-    <h2></h2><!-- Waiting for participants to join. -->
+    <!-- <h2></h2> --> <!-- Waiting for participants to join. -->
     <!--  SEARCH TRACKER -->
-    <p id="tracking"></p>
+    <!-- <p id="tracking"></p> -->
 
 </div>
-
-
-
-<div id="main_wrap">
-    <div id="content">
-        <iframe  id = "frame" src="" width="1100" height="650" scrolling="no" frameborder="0">
-
-        </iframe>
-    </div>
-
-    <div id="sidebar">
-        <p> This is where the instructions would go</p>
-        <button id = "button1" type="button" value = "Next">Next</button>
-
-    </div>
-</div>
-
 
 <script>
 
-    $('#main_wrap').hide();
-    $('#content').hide();
-    $('#sidebar').hide();
+   // $('#main_wrap').hide();
+    //$('#content').hide();
+    //$('#sidebar').hide();
 
     $('#submitDemographics').click(function() {
         $('#signup').submit(function(){
@@ -221,11 +204,11 @@
             }else if(candidateStage[index] == 0){
                 display.innerHTML = "first time searched "+"<br />";
             }else{
-                display.innerHTML = candidateStage[index]+"<br />";
+               // display.innerHTML = candidateStage[index]+"<br />";
             }
 
         } else {
-            display.innerHTML = "Sorry, your browser does not support web storage...";
+          //  display.innerHTML = "Sorry, your browser does not support web storage...";
         }
     }
 </script>
