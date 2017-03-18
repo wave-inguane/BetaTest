@@ -98,9 +98,13 @@
     function findUser(element) {
         return element == curr_name;
     }
+
+    tempList = tempList.slice(0,2);
     var index = tempList.findIndex(findUser);
-            if(index != -1)
-    console.log('Index: [ '+ index +' ] userID = ' + id);//DEBUG
+            if(index != -1) {
+                //index = index % 2;
+                console.log('Index: [ ' + index + ' ] userID = ' + id);//DEBUG
+            }
     //end position
 
     var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');

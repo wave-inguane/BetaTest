@@ -79,8 +79,19 @@ app.post('/ProgrammingStudy', function (req, res) {
     // Check if there is already data for this worker in Firebase.
     // If there is, the worker has already participated.
     var workerRef = new Firebase(firebaseStudyURL + '/workers/' + workerId);
-    workerRef.once('value', function(snapshot) {
-        if (snapshot.val() == null) {
+
+    var flag = false;
+    workerRef.once("value", function(snapshot){
+        //for each key in users
+        snapshot.forEach(function (childSnapshot){
+
+            var userId = childSnapshot.val().workerId;//['workerId'];
+            if(workerId == userId){
+                flag = true;
+            }
+        });
+        //new email, valid registration
+        if(!flag) {
             //add new worker
             workerRef.push({
                 'workerId': workerId,
@@ -89,10 +100,12 @@ app.post('/ProgrammingStudy', function (req, res) {
                 'developerExp': yearsOfDevExp,
                 'screenTime': screenTaskTime + " ms"
             });
+            res.sendFile(__dirname + '/client/waitingRoom.html');
+        }
+        else {
+            res.sendFile(__dirname + '/client/alreadyParticipated.html');
         }
     });
-
-    res.sendFile(__dirname + '/client/waitingRoom.html');
 
 });
 
@@ -218,7 +231,6 @@ function startSession(session, waitlistSnapshot)
             //var workers = {}; //@global
             var i = 0;
             waitlistSnapshot.forEach(function(waitlistEntrySnapshot) {
-               // workers[i] = {"workerId" : waitlistEntrySnapshot.val().workerId};
                 workersInSession[i] = waitlistEntrySnapshot.val().workerId;
                 i++;
 
@@ -247,6 +259,8 @@ function startSession(session, waitlistSnapshot)
 
             // Add this sessionID to the list of active sessions
             var activeSessionsRef = new Firebase(firebaseStudyURL + '/status/activeSessions');
+
+
             activeSessionsRef.push(session.sessionID);
 
             // Set the sessionURL for each of the first totalParticipants workers on the waitlist.
@@ -290,106 +304,53 @@ function sessionCompleted(sessionID) // update Firebase
 //                 if there is a better way please help
 //.................................................................................................
 app.post('/dropout', function (req, res) {
-    var  timeSpent = req.body.taskEnded;
-    var  workerId = req.body.participantId;
-    var  workerPosition = req.body.participantPosition;
-   // dropoutTime = Math.floor(dropoutTime/60000);//min
-    console.log("count: "+ workerPosition +" Participant: " + workerId + ' exited in '+ timeSpent + ' ms');
+    var timeSpent = req.body.taskEnded;
+    var workerId = req.body.participantId;
+    var workerPosition = req.body.participantPosition;
+    // dropoutTime = Math.floor(dropoutTime/60000);//min
+    console.log("count: " + workerPosition + " Participant: " + workerId + ' exited in ' + timeSpent + ' ms');
 
-    writeUpdate(timeSpent, workerId, workerPosition);
-
-
-
-
-/*
-    var i; var j = 0;
-    for (i = 0; i < 2; ) {
-      //  for (j = 0; j < 1; ++j) {
-            var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+i.toString()+'/workers');//'+j.toString()///'+j.toString()//i.toString()
-            workerRef.once('value', function (snapshot)
-            {
-                if (snapshot.val() != null)
-                {
-
-                    //var k = 0;
-                    snapshot.forEach(function(childSnapshot) {
-                        var myKey = snapshot.key();
-                        if ((childSnapshot.val() == workerId) ) {//&& (myKey.text == j.text)
-
-                            workerRef = new Firebase(firebaseStudyURL + '/sessions/'+i.toString()+'/workers/'+j.toString());
-                            workerRef.child('loggedOut').push({
-                                'workerId': workerId,
-                                timeSpentMillis: timeSpent
-                            });
-                            //console.log("IN: " + "i = " + i + " j =" + j + " SNP: " + childSnapshot.val() + '\n');
-                            return true;
-                        }
-
-                        j++;
-                    });
-                }
+    var activeSessionsRef = new Firebase(firebaseStudyURL + '/status/activeSessions');
+    activeSessionsRef.once("value", function (snapshot) {
+        if (snapshot.val() != null) {
+            var i = 0;
+            snapshot.forEach(function (activeSessionsSnapshot) {
+                writeUpdate(timeSpent, workerId, workerPosition, i.toString());
+                i++;
             });
-            console.log("OUT: "+"i = " +i+  " j =" + j +" "+ workerId +'\n');
-            ++i;
-
-       }
-       */
-
-//-----------------------------------------------------------
-
-   //}
-
-    /*
-     var i; var j;
-     for (i = 0; i < 6; ++i) {
-     for (j = 0; j < 1; ++j) {
-     var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+i.toString()+'/workers/'+j.toString());//'+j.toString()
-     workerRef.once('value', function (snapshot) {
-     var myKey = snapshot.key();
-     //var obj = j.text;
-     if ((myKey.text == j.text) && (snapshot.val() == workerId)){//key == '0' && snapshot.val() == workerId
-     //update
-     workerRef.set({
-     'id': workerId,
-     timeSpentMillis: timeSpent
-     });
-     // return true;
-     console.log("IN: "+"i = " +i+  " j =" + j  +" "+ workerId+'\n');
-     // return true;
-     }
-
-     console.log("OUTER SNAP: "+ j + ": "+snapshot.val()  +'\n');
-     // console.log("key: " + key +" i = " +i+  " j =" + j  +" "+ workerId+'\n');
-     });
-     //console.log("OUT: "+"i = " +i+  " j =" + j +" "+ workerId +'\n');
-
-
-     }
-     }
-     */
-
+            console.log("Length: " + i +"\n");//length
+        }
+    });
 });
 
-
-function writeUpdate(timeSpent, workerId, position) {
-    // A post entry.
+function writeUpdate(timeSpent, workerId, position, sessionNum) {
     var postData = {
         id: workerId,
         timeSpent: timeSpent
     };
+   // var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+sessionNum+'/workersInSession');
+   // workersInSession[position] = postData;
+   // workerRef.update(workersInSession);
+    //----------------------------
+    var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+sessionNum+'/workersInSession');
+        workerRef.on("value", function(snapshot) {
 
-    // Get a key for a new Post.
-    var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+0+'/workersInSession');
-    //var newPostKey = workerRef.child('loggedOut').key;
+        if (snapshot.val() != null){
+            snapshot.forEach(function(childSnapshot) {
+                    if (childSnapshot.val().hasOwnProperty(position.toString())){
 
-    // Write the new post's data simultaneously in the posts list and the user's post list.
-    //var updates = {};
-    workersInSession[position] = postData;
+                        if(childSnapshot.val() ==  workerId)
+                        {
+                            workersInSession[position] = postData;
+                            workerRef.update(workersInSession);
+                        }
+                    }
 
-    //return
-    workerRef.update(workersInSession);
+                console.log("child: " + childSnapshot.val()  +"\n");//length
+            });
 
-
+        }
+    });
 }
 
 
