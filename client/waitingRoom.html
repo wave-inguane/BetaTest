@@ -9,6 +9,15 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
     <link rel="stylesheet" href="styles.css" />
+    <script>
+        $( document ).ready(function() {
+            console.log( "document loaded" );
+        });
+
+        $( window ).on( "load", function() {
+            console.log( "window loaded" );
+        });
+    </script>
 </head>
 <body>
 <div class="main-div">
@@ -33,14 +42,23 @@
         <!--<p> This is where the instructions would go</p>-->
 
         <button id = "button1"  class="btn btn-primary far-right" type="button" value = "Next">Next</button>
-
     </div>
+
+<form type="hidden" id="exitTime" action="/dropout" method="post">
+    <input type="hidden" name="taskEnded" id="taskEnded"/>
+    <input type="hidden" name="participantId" id="participantId" />
+    <input type="hidden" name="participantPosition" id="participantPosition" />
+</form>
 <!--</div>-->
+
+
 </body>
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
 <script>
+    var startTimeMillis = 0;
+    var tempList;
     /**
     // Utility function to get URL parameter.
     // From http://stackoverflow.com/questions/19491336/get-url-parameter-jquery
@@ -59,6 +77,7 @@
     };
 */
 
+
     $('#frame').hide();
     $('#sideFrame').hide();
     $('#mainwrap').hide();
@@ -68,12 +87,27 @@
         var workerPresent = JSON.parse(waiting);
     }
     var id =  workerPresent[0];//getUrlParameter('workerID');
-    console.log("userID = " + id);//DEBUG
+
+    var temp = localStorage.getItem("newUsersKey");
+    if(temp != null) {
+        tempList = JSON.parse(temp);
+    }
+
+    //position
+    var curr_name = id;
+    function findUser(element) {
+        return element == curr_name;
+    }
+    var index = tempList.findIndex(findUser);
+            if(index != -1)
+    console.log('Index: [ '+ index +' ] userID = ' + id);//DEBUG
+    //end position
 
     var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');
 
     // Add an entry to the waitlist to start waiting for a session to be assigned.
     var waitEntryRef = waitListRef.push({ "workerId": id});
+
 
     // If we disconnect before we get assigned a room, remove us from the waiting list.
     waitEntryRef.onDisconnect().set(null);
@@ -99,8 +133,39 @@
             $('#sidebar').show();
             $('#sideFrame').show();
             waitEntryRef.set(null);
+            resetNewUsers();
+
+            var startTime = new Date();
+            startTimeMillis =  startTime.getTime();
         }
     });
+
+    $(document).ready(function(){
+            $(window).on('beforeunload', function(){
+
+                var endTime = new Date();
+                var taskTimeMillis = endTime.getTime() - startTimeMillis;
+                $('#taskEnded').val(taskTimeMillis);
+                $('#participantId').val(id);
+
+                $('#participantPosition').val(Number(index));
+
+                $('#exitTime').submit();
+
+               //setTimeout(function(){console.log("data sent ");}, 3000);
+                return " ? ";
+            });
+
+    });
+
+    //------------------------------------------------
+    // use this function to reset state
+    //------------------------------------------------
+    function resetNewUsers(){
+        localStorage.removeItem("newUsersKey");
+    }
+
+
 </script>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>

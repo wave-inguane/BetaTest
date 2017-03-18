@@ -22,12 +22,22 @@
             float: none;}
 
     </style>
+    <script>
+        $( document ).ready(function() {
+            console.log( "document loaded" );
+        });
+
+        $( window ).on( "load", function() {
+            console.log( "window loaded" );
+        });
+       // resetNewUsers();
+    </script>
 </head>
 <body>
 
 <div class="main-div">
 
-    <form id="signup" name="signup" action="/waiting_room" method="post" >
+    <form id="signup" name="signup" action="/ProgrammingStudy" method="post" >
         <div>
             <label for="workerID" class="label">ParticipantID</label>
             <input type="text" name="workerID" required="required" id="workerID" size="36"
@@ -47,14 +57,14 @@
 
             <label for="yearsExp" class="label">Years of experience programming in javascript</label>
             <input type="text" name="yearsExp" required="required" id="yearsExp" size="36"
-                   placeholder="Enter string" />
+                   placeholder="Enter number" />
         </div>
         <div>
             <label for="workDevExp" class="label">
                 Years of industry experience as software developer, if any (internships, full time positions)
             </label>
             <input type="text" name="workDevExp" required="required"  id="workDevExp" size="36"
-                   placeholder="Enter string"/>
+                   placeholder="Enter number"/>
         </div>
         <div>
             <button id="submitDemographics" class="btn btn-primary">Submit</button>
@@ -63,15 +73,11 @@
 
     <!-- <h2></h2> --> <!-- Waiting for participants to join. -->
     <!--  SEARCH TRACKER -->
-    <!-- <p id="tracking"></p> -->
+    <p id="tracking"></p>
 
 </div>
 
 <script>
-
-   // $('#main_wrap').hide();
-    //$('#content').hide();
-    //$('#sidebar').hide();
 
     $('#submitDemographics').click(function() {
         $('#signup').submit(function(){
@@ -83,6 +89,8 @@
                 //save to local storage
                 resetStage();
                 stageCandidate();
+                //resetNewUsers()
+                stageNewUsers();
             }
         });
     });
@@ -165,9 +173,10 @@
         if(typeof(Storage) !== "undefined") {
 
             var candidateId = $("#workerID").val();
+            var newUser = candidateId;
 
             var curr_name = candidateId;
-            function findGame(element) {
+            function findName(element) {
                 return element == curr_name;
             }
             // storing our arrays as a strings
@@ -184,7 +193,7 @@
                 candidateStage = JSON.parse(presentCandidate);
                // countTracker = JSON.parse(timesSearched);
 
-                index = candidateStage.findIndex(findGame);
+                index = candidateStage.findIndex(findName);
                 if(index == -1){ //if not tracked
                     candidateStage.push(curr_name);
                    // countTracker.push(1);
@@ -212,6 +221,64 @@
         }
     }
 </script>
+
+
+<script>
+    var candidateAll = [ ];
+
+    //------------------------------------------------
+    // use this function to reset state
+    //------------------------------------------------
+    function resetNewUsers(){
+        localStorage.removeItem("newUsersKey");
+    }
+
+    function stageNewUsers(){
+
+        var display = document.getElementById("tracking");
+
+        if(typeof(Storage) !== "undefined") {
+
+            var newUser  = $("#workerID").val();
+
+            //if not initialized do it now
+            if(localStorage.getItem("newUsersKey") == null){
+                localStorage.setItem("newUsersKey", JSON.stringify(candidateAll));
+            }
+
+            // retrieving our data and converting it back into an array
+            var presentUsers = localStorage.getItem("newUsersKey");
+            if(presentUsers  != null){
+                candidateAll = JSON.parse(presentUsers);
+                candidateAll.push(newUser);
+                localStorage.setItem("newUsersKey", JSON.stringify(candidateAll));
+            }
+
+
+            var presentUsers = localStorage.getItem("newUsersKey");
+            if(presentUsers  != null){
+                candidateAll = JSON.parse(presentUsers);
+            }
+
+            //position
+            var curr_name = newUser;
+            function findUser(element) {
+                return element == curr_name;
+            }
+            var index = candidateAll.findIndex(findUser);
+            if(index == -1){ //if not tracked
+                candidateAll.push(curr_name);
+                localStorage.setItem("newUsersKey", JSON.stringify(candidateAll));
+            }else{
+                //candidateAll[index] = 'xyz';
+                //candidateAll[index] = curr_name;
+                //candidateAll.push(curr_name);
+                //localStorage.setItem("newUsersKey", JSON.stringify(candidateAll));
+            }
+        }
+    }
+</script>
+
 
 </body>
 </html>

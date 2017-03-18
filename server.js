@@ -12,6 +12,7 @@ var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microt
 var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;             // JSON structure for the next session
 var sessions = {};
+var workersInSession = {};
 var screenTaskTime;          //time spent on screening task
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -57,7 +58,7 @@ app.post('/screen_submitted', function (req, res) {
     console.log('screening submitted');
     console.log(result + " " + screenTaskTime);
 
-    if(result == 7) {
+    if((result == 7)  &&   (screenTaskTime <= 300000)) {//5 min
         res.sendFile(__dirname + '/client/demographics.html');
     }
     else
@@ -67,7 +68,7 @@ app.post('/screen_submitted', function (req, res) {
 //..................................................................................................
 // After finishing the demographics survey, send the user to the waiting room.
 //..................................................................................................
-app.post('/waiting_room', function (req, res) {
+app.post('/ProgrammingStudy', function (req, res) {
     // TODO: store the demographics data to firebase, associated with the participant.
     //DONE
     var workerId = req.body.workerID;
@@ -92,16 +93,7 @@ app.post('/waiting_room', function (req, res) {
     });
 
     res.sendFile(__dirname + '/client/waitingRoom.html');
-    /*
-    //reset
-    screenTaskTime = null;
 
-    console.log('WORKER ID: ' + workerId);
-    req.setTimeout(86400000, function () {
-        req.abort();
-        console.log("display after 24 hours");
-    });
-    */
 });
 
 
@@ -125,7 +117,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 7;
+    var totalWorkflowCount = 2;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -137,7 +129,7 @@ function createWorkflows()
         var workflow = {};
         workflow.workflowURL = pastebinURL + 'workflowXYZ' + i;
         workflow.timeLimitMins = 10;
-        workflow.participantsPerSession = 1;
+        workflow.participantsPerSession = 2;
         workflow.totalSessions = 1;
         var workflowID = i;
         workflows[workflowID] = workflow;
@@ -223,10 +215,11 @@ function startSession(session, waitlistSnapshot)
             console.log("NEXT SESSION: "+ nextSessionId);
 
             // Build the list of IDs for the workers who will be working on this session.
-            var workers = {};
+            //var workers = {}; //@global
             var i = 0;
             waitlistSnapshot.forEach(function(waitlistEntrySnapshot) {
-                workers[i] = waitlistEntrySnapshot.val().workerId;
+               // workers[i] = {"workerId" : waitlistEntrySnapshot.val().workerId};
+                workersInSession[i] = waitlistEntrySnapshot.val().workerId;
                 i++;
 
                 // If we've selected all of the participants, break.
@@ -240,7 +233,7 @@ function startSession(session, waitlistSnapshot)
             var date = new Date();
             session.startTime = date.toDateString() + ' '  + date.toTimeString();
             session.startTimeMillis = date.getTime();
-            session.workers = workers;
+            session.workersInSession = workersInSession;
             session.sessionID = nextSessionId;
             session.workflowID = nextSessionId;
             session.workflowURL = sessions[session.sessionID].workflowURL;
@@ -261,8 +254,7 @@ function startSession(session, waitlistSnapshot)
             // We do this last to ensure that the session is now fully set up.
             i = 0;
             waitlistSnapshot.forEach(function(waitlistEntrySnapshot) {
-                var workerWaitlistRef = new Firebase(firebaseStudyURL + '/waitlist/'
-                    + waitlistEntrySnapshot.key() + '/sessionURL');
+                var workerWaitlistRef = new Firebase(firebaseStudyURL + '/waitlist/' + waitlistEntrySnapshot.key() + '/sessionURL');
                 workerWaitlistRef.set(session.workflowURL);
 
                 i++;
@@ -289,3 +281,117 @@ function sessionCompleted(sessionID) // update Firebase
     // Each worker should set its logged out time when it leaves session.
     //
 }
+
+
+//.................................................................................................
+// Dropouts        I am still working on this
+//                 I think i will need a nested for loop
+//                 i for sessionID node and j for workers key location
+//                 if there is a better way please help
+//.................................................................................................
+app.post('/dropout', function (req, res) {
+    var  timeSpent = req.body.taskEnded;
+    var  workerId = req.body.participantId;
+    var  workerPosition = req.body.participantPosition;
+   // dropoutTime = Math.floor(dropoutTime/60000);//min
+    console.log("count: "+ workerPosition +" Participant: " + workerId + ' exited in '+ timeSpent + ' ms');
+
+    writeUpdate(timeSpent, workerId, workerPosition);
+
+
+
+
+/*
+    var i; var j = 0;
+    for (i = 0; i < 2; ) {
+      //  for (j = 0; j < 1; ++j) {
+            var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+i.toString()+'/workers');//'+j.toString()///'+j.toString()//i.toString()
+            workerRef.once('value', function (snapshot)
+            {
+                if (snapshot.val() != null)
+                {
+
+                    //var k = 0;
+                    snapshot.forEach(function(childSnapshot) {
+                        var myKey = snapshot.key();
+                        if ((childSnapshot.val() == workerId) ) {//&& (myKey.text == j.text)
+
+                            workerRef = new Firebase(firebaseStudyURL + '/sessions/'+i.toString()+'/workers/'+j.toString());
+                            workerRef.child('loggedOut').push({
+                                'workerId': workerId,
+                                timeSpentMillis: timeSpent
+                            });
+                            //console.log("IN: " + "i = " + i + " j =" + j + " SNP: " + childSnapshot.val() + '\n');
+                            return true;
+                        }
+
+                        j++;
+                    });
+                }
+            });
+            console.log("OUT: "+"i = " +i+  " j =" + j +" "+ workerId +'\n');
+            ++i;
+
+       }
+       */
+
+//-----------------------------------------------------------
+
+   //}
+
+    /*
+     var i; var j;
+     for (i = 0; i < 6; ++i) {
+     for (j = 0; j < 1; ++j) {
+     var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+i.toString()+'/workers/'+j.toString());//'+j.toString()
+     workerRef.once('value', function (snapshot) {
+     var myKey = snapshot.key();
+     //var obj = j.text;
+     if ((myKey.text == j.text) && (snapshot.val() == workerId)){//key == '0' && snapshot.val() == workerId
+     //update
+     workerRef.set({
+     'id': workerId,
+     timeSpentMillis: timeSpent
+     });
+     // return true;
+     console.log("IN: "+"i = " +i+  " j =" + j  +" "+ workerId+'\n');
+     // return true;
+     }
+
+     console.log("OUTER SNAP: "+ j + ": "+snapshot.val()  +'\n');
+     // console.log("key: " + key +" i = " +i+  " j =" + j  +" "+ workerId+'\n');
+     });
+     //console.log("OUT: "+"i = " +i+  " j =" + j +" "+ workerId +'\n');
+
+
+     }
+     }
+     */
+
+});
+
+
+function writeUpdate(timeSpent, workerId, position) {
+    // A post entry.
+    var postData = {
+        id: workerId,
+        timeSpent: timeSpent
+    };
+
+    // Get a key for a new Post.
+    var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+0+'/workersInSession');
+    //var newPostKey = workerRef.child('loggedOut').key;
+
+    // Write the new post's data simultaneously in the posts list and the user's post list.
+    //var updates = {};
+    workersInSession[position] = postData;
+
+    //return
+    workerRef.update(workersInSession);
+
+
+}
+
+
+
+
