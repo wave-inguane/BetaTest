@@ -199,7 +199,7 @@
                    // countTracker.push(1);
                     localStorage.setItem("candidate", JSON.stringify(candidateStage));
                     //localStorage.setItem("numOfSearches", JSON.stringify(countTracker));
-                    display.innerHTML = curr_name+ " searched: " +1+" "+ "times"+"<br />";
+                    display.innerHTML = curr_name +"<br />";
 
                 }else{// inc count
                     //countTracker[index] = countTracker[index] + 1;
@@ -211,7 +211,7 @@
                 candidateStage[index]  = 0;
                 //countTracker[index] = 0;
             }else if(candidateStage[index] == 0){
-                display.innerHTML = "first time searched "+"<br />";
+                //display.innerHTML = "first time searched "+"<br />";
             }else{
                // display.innerHTML = candidateStage[index]+"<br />";
             }
@@ -224,7 +224,7 @@
 
 
 <script>
-    var candidateAll = [];
+    var candidateAll = [ ];
 
     //------------------------------------------------
     // use this function to reset state
