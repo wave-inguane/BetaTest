@@ -51,14 +51,18 @@
 </form>
 <!--</div>-->
 
-
+<p id="tracking"></p>
 </body>
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
 <script>
+    //https://firebase.google.com/docs/database/web/offline-capabilities
+     // https://firebase.google.com/docs/reference/js/firebase.database.OnDisconnect
     var startTimeMillis = 0;
     var tempList;
+    var waitingPosition = 0;
+    var waitList = {}
     /**
     // Utility function to get URL parameter.
     // From http://stackoverflow.com/questions/19491336/get-url-parameter-jquery
@@ -104,10 +108,12 @@
             if(index != -1) {
                 //index = index % 2;
                 console.log('Index: [ ' + index + ' ] userID = ' + id);//DEBUG
+                //waitingPosition = index;
             }
     //end position
 
     var waitListRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/waitlist');
+    //waitList[waitingPosition] = { "workerId": id};
 
     // Add an entry to the waitlist to start waiting for a session to be assigned.
     var waitEntryRef = waitListRef.push({ "workerId": id});
@@ -128,7 +134,10 @@
             // Navigate to the server session URL, making sure to disable the back button for this URL
             // (don't want participant joining another session later).
 
-            //window.location.replace(snapshot.val());
+            //var  str = snapshot.val();
+            //var res = str.replace(/#-/g, "#:-");
+            //window.location.replace(res);
+
             $('#frame').attr('src', snapshot.val());
             $('.main-div').hide();
             $('h2').remove();
@@ -137,11 +146,13 @@
             $('#sidebar').show();
             $('#sideFrame').show();
             waitEntryRef.set(null);
+
             resetNewUsers();
 
             var startTime = new Date();
-            startTimeMillis =  startTime.getTime();
+            startTimeMillis = startTime.getTime();
         }
+
     });
 
     $(document).ready(function(){

@@ -1,6 +1,6 @@
 /**
  * Created by tlatoza on 11/23/15.
- * updated by Wave Inguane on 03/03/2017.
+ * updated by Wave Inguane on 03/22/2017.
  */
 "use strict";
 
@@ -130,7 +130,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 2;
+    var totalWorkflowCount = 12;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -269,12 +269,16 @@ function startSession(session, waitlistSnapshot)
             i = 0;
             waitlistSnapshot.forEach(function(waitlistEntrySnapshot) {
                 var workerWaitlistRef = new Firebase(firebaseStudyURL + '/waitlist/' + waitlistEntrySnapshot.key() + '/sessionURL');
-                workerWaitlistRef.set(session.workflowURL);
+                var str = session.workflowURL;
+                workerWaitlistRef.set(str);
+
+               // var share = str.replace(/#-/g, "#:-");
+               // workerWaitlistRef.push(share);
 
                 i++;
                 // If we've selected all of the participants, break.
                 if (i >= session.totalParticipants)
-                    return true;    // break
+                  return true;    // break
             });
 
 
@@ -355,4 +359,8 @@ function writeUpdate(timeSpent, workerId, position, sessionNum) {
 
 
 
-
+function  timeOut() {
+    // TODO: Set a timeout to be able to end the session when the time is up
+    //set a timer, end it even if submit is not clicked
+    //onDisconnect() on Fire. timer on client side
+}
