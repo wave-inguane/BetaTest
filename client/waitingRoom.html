@@ -141,20 +141,24 @@
     });
 
 
+function onClose(){
+    var zflags = {};
+    var date = new Date();
+    var exitData = {
+        onlineState: "off",
+        exitTime : Firebase.ServerValue.TIMESTAMP
+        //update the time at firebase when we get there
+    };
+    zflags[id] = exitData;
+    return zflags;
+}
     //---------------------------------------------------------------------------------------------------------------------------------
     // TODO fix time issue
     //---------------------------------------------------------------------------------------------------------------------------------
     function setRef(sessionID) {
         var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionID);
-        var zflags = {};
-        var date = new Date();
-        var exitData = {
-                onlineState: "off",
-                endTime: date.toDateString() + ' ' + date.toTimeString(),
-                endTimeMillis: date.getTime()
-        };
-        zflags[id] = exitData;
-        flagRef.onDisconnect().update(zflags);
+
+        flagRef.onDisconnect().update(onClose());
     }
 
     /*
