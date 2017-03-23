@@ -12,12 +12,12 @@ var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microt
 var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;             // JSON structure for the next session
 var sessions = {};
-var workersInSession = {};
+var sessionMembers = {};
 var screenTaskTime;          //time spent on screening task
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('client'));
-app.set('port',(process.env.PORT || 8888));
+app.set('port',(process.env.PORT || 8889));
 //app.set('views', './views');
 //app.set('view engine', 'mustache');
 
@@ -79,17 +79,27 @@ app.post('/ProgrammingStudy', function (req, res) {
     // Check if there is already data for this worker in Firebase.
     // If there is, the worker has already participated.
     var workerRef = new Firebase(firebaseStudyURL + '/workers/' + workerId);
+            //add new worker
+            workerRef.push({
+                'workerId': workerId,
+                'status': currstatus,
+                'languageExp': yearsOfProgramExp,
+                'developerExp': yearsOfDevExp,
+                'screenTime': screenTaskTime + " ms"
+            });
 
+    res.sendFile(__dirname + '/client/waitingRoom.html');
+    /*  no dups
     var flag = false;
     workerRef.once("value", function(snapshot){
         //for each key in users
         snapshot.forEach(function (childSnapshot){
-
             var userId = childSnapshot.val().workerId;//['workerId'];
             if(workerId == userId){
                 flag = true;
             }
         });
+
         //new email, valid registration
         if(!flag) {
             //add new worker
@@ -106,8 +116,9 @@ app.post('/ProgrammingStudy', function (req, res) {
             res.sendFile(__dirname + '/client/alreadyParticipated.html');
         }
     });
-
+*/
 });
+
 
 
 // Start the server.
@@ -231,7 +242,7 @@ function startSession(session, waitlistSnapshot)
             //var workers = {}; //@global
             var i = 0;
             waitlistSnapshot.forEach(function(waitlistEntrySnapshot) {
-                workersInSession[i] = waitlistEntrySnapshot.val().workerId;
+                sessionMembers[i] = waitlistEntrySnapshot.val().workerId;
                 i++;
 
                 // If we've selected all of the participants, break.
@@ -245,7 +256,7 @@ function startSession(session, waitlistSnapshot)
             var date = new Date();
             session.startTime = date.toDateString() + ' '  + date.toTimeString();
             session.startTimeMillis = date.getTime();
-            session.workersInSession = workersInSession;
+            session.sessionMembers = sessionMembers;
             session.sessionID = nextSessionId;
             session.workflowID = nextSessionId;
             session.workflowURL = sessions[session.sessionID].workflowURL;
@@ -285,9 +296,22 @@ function startSession(session, waitlistSnapshot)
             // TODO: Set a timeout to be able to end the session when the time is up
             //set a timer, end it even if submit is not clicked
             //onDisconnect() on Fire. timer on client side
+
+            /*
+            //Time checker ?????
+            var timeUpRef = new Firebase(firebaseStudyURL + '/sessions/0/startTimeMillis');
+            timeUpRef.on("value", function(snap) {
+                var startTimeMs = snap.val();
+                var lapseTimeMs = new Date().getTime() - startTimeMs; //timeUpRef.ServerValue.TIMESTAMP
+                if(lapseTimeMs >= 100000) //5mi
+                    timeUpRef.onDisconnect().upstate({"overtime" : "limit"});
+            });
+            */
         }
     });
+
 }
+
 
 // To be called when a session has been finished.
 function sessionCompleted(sessionID) // update Firebase
@@ -298,8 +322,8 @@ function sessionCompleted(sessionID) // update Firebase
     // Remove this session from status.activeSessions --> Firebase
     // Each worker should set its logged out time when it leaves session.
     //
-}
 
+}
 
 //.................................................................................................
 // Dropouts        I am still working on this
@@ -325,6 +349,7 @@ app.post('/dropout', function (req, res) {
             console.log("Length: " + i +"\n");//length
         }
     });
+
 });
 
 function writeUpdate(timeSpent, workerId, position, sessionNum) {
@@ -332,11 +357,11 @@ function writeUpdate(timeSpent, workerId, position, sessionNum) {
         id: workerId,
         timeSpent: timeSpent
     };
-   // var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+sessionNum+'/workersInSession');
-   // workersInSession[position] = postData;
-   // workerRef.update(workersInSession);
+   // var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+sessionNum+'/sessionMembers');
+   // sessionMembers[position] = postData;
+   // workerRef.update(sessionMembers);
     //----------------------------
-    var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+sessionNum+'/workersInSession');
+    var workerRef = new Firebase(firebaseStudyURL + '/sessions/'+sessionNum+'/sessionMembers');
         workerRef.on("value", function(snapshot) {
 
         if (snapshot.val() != null){
@@ -345,8 +370,8 @@ function writeUpdate(timeSpent, workerId, position, sessionNum) {
 
                         if(childSnapshot.val() ==  workerId)
                         {
-                            workersInSession[position] = postData;
-                            workerRef.update(workersInSession);
+                            sessionMembers[position] = postData;
+                            workerRef.update(sessionMembers);
                         }
                     }
 
@@ -357,10 +382,3 @@ function writeUpdate(timeSpent, workerId, position, sessionNum) {
     });
 }
 
-
-
-function  timeOut() {
-    // TODO: Set a timeout to be able to end the session when the time is up
-    //set a timer, end it even if submit is not clicked
-    //onDisconnect() on Fire. timer on client side
-}
