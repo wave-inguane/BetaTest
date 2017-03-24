@@ -13,6 +13,8 @@ var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;             // JSON structure for the next session
 var sessions = {};
 var sessionMembers = {};
+var activeId = {};
+var activeSession = {};
 var screenTaskTime;          //time spent on screening task
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -255,7 +257,7 @@ function startSession(session, waitlistSnapshot)
             // Record the start time and workers for the session.
             var date = new Date();
             session.startTime = date.toDateString() + ' '  + date.toTimeString();
-            session.startTimeMillis = date.getTime();
+            session.startTimeMillis = Firebase.ServerValue.TIMESTAMP; //date.getTime();
             session.sessionMembers = sessionMembers;
             session.sessionID = nextSessionId;
             session.workflowID = nextSessionId;
@@ -292,21 +294,9 @@ function startSession(session, waitlistSnapshot)
                   return true;    // break
             });
 
-
             // TODO: Set a timeout to be able to end the session when the time is up
             //set a timer, end it even if submit is not clicked
             //onDisconnect() on Fire. timer on client side
-
-            /*
-            //Time checker ?????
-            var timeUpRef = new Firebase(firebaseStudyURL + '/sessions/0/startTimeMillis');
-            timeUpRef.on("value", function(snap) {
-                var startTimeMs = snap.val();
-                var lapseTimeMs = new Date().getTime() - startTimeMs; //timeUpRef.ServerValue.TIMESTAMP
-                if(lapseTimeMs >= 100000) //5mi
-                    timeUpRef.onDisconnect().upstate({"overtime" : "limit"});
-            });
-            */
         }
     });
 
@@ -325,6 +315,8 @@ function sessionCompleted(sessionID) // update Firebase
 
 }
 
+
+/*
 //.................................................................................................
 // Dropouts        I am still working on this
 //                 I think i will need a nested for loop
@@ -381,4 +373,4 @@ function writeUpdate(timeSpent, workerId, position, sessionNum) {
         }
     });
 }
-
+*/
