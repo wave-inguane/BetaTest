@@ -9,7 +9,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var Firebase = require("firebase");
 var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1';
-var pastebinURL = 'https://seecoderun.firebaseapp.com/#:-';
+var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;
 var sessions = {};
 var sessionMembers = {};
