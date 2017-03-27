@@ -295,7 +295,7 @@ function startSession(session, waitlistSnapshot)
             //set a timer, end it even if submit is not clicked
             //onDisconnect() on Fire. timer on client side
             //DONE
-            setTimeout(timeOut, 30000, nextSessionId);//10min
+            setTimeout(timeOut, 17000, nextSessionId);//10min
         }
     });
 
