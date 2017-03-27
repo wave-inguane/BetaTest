@@ -66,6 +66,9 @@
             <input type="text" name="workDevExp" required="required"  id="workDevExp" size="36"
                    placeholder="Enter number"/>
         </div>
+
+        <input type="hidden" name="demographicsCollectTimeMillis" id="demographicsCollectTimeMillis"/>
+
         <div>
             <button id="submitDemographics" class="btn btn-primary">Submit</button>
         </div>
@@ -79,6 +82,10 @@
 
 <script>
 
+
+    var startTime = new Date();
+    var startTimeMillis =  startTime.getTime();
+
     $('#submitDemographics').click(function() {
         $('#signup').submit(function(){
             var userID =  $('#workerID').val();
@@ -86,6 +93,11 @@
                 alert('Please supply a name in the Name field.');
                 return false;
             }else{
+                var endTime = new Date();
+                var taskTimeMillis = endTime.getTime() - startTimeMillis;
+                $('#demographicsCollectTimeMillis').val(taskTimeMillis);
+
+
                 //save to local storage
                 resetStage();
                 stageCandidate();

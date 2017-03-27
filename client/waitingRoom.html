@@ -10,18 +10,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
     <link rel="stylesheet" href="styles.css" />
     <script>
-        $( document ).ready(function() {
-            console.log( "document loaded" );
-        });
+        function startTime() {
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('clock').innerHTML =
+                h + ":" + m + ":" + s;
 
-        $( window ).on( "load", function() {
-            console.log( "window loaded" );
-        });
+            document.getElementById('clock2').innerHTML =
+                h + ":" + m + ":" + s;
+
+            var t = setTimeout(startTime, 500);
+
+        }
+        function checkTime(i) {
+            if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+            return i;
+        }
     </script>
 </head>
-<body>
+<body onload="startTime()">
 <div class="main-div">
     <h2>Waiting for participants to join.</h2>
+    <div id="clock"></div>
 </div>
 <!--  https://api.jquery.com/remove/ -->
 <!-- <p id="tracking"></p> -->
@@ -51,8 +65,10 @@
 </form>
 <!--</div>-->
 
-
+<div id="clock2"></div>
+<div id="DEBUG"></div>
 </body>
+
 
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
@@ -66,6 +82,7 @@
     $('#sideFrame').hide();
     $('#mainwrap').hide();
     $('#sidebar').hide();
+    $('#clock2').hide();
     var waiting = localStorage.getItem("candidate");
     if(waiting != null) {
         var workerPresent = JSON.parse(waiting);
@@ -114,15 +131,45 @@
             // Navigate to the server session URL, making sure to disable the back button for this URL
             // (don't want participant joining another session later).
 
-            //window.location.replace(snapshot.val());
+            //var url = snapshot.val();
+            //url.replace(/#-/g, "#:-");
+           // window.location.replace(snapshot.val());
+
+
+           //var url = window.location.href;//.substring(1);
+           // $('DEBUG').innerHTML = url;
+           // console.log("URL: " + url);
+           // window.location.replace("http://wavelino.coffeecup.com/");
+
+
+           //$('#frame').attr('src', snapshot.val());
+
+            /*
+            document.getElementById("DEBUG").innerHTML =
+                "Page location is " + window.location.href;
+            var url = window.location.href;//.substring(1);
+            //$('DEBUG').innerHTML = url;
+            console.log("URL: " + url);
+             */
+            /*
+            var url = window.location.search;//.substring(1);
+            $('DEBUG').innerHTML = url;
+            console.log("URL: " + url);
+            */
+
+
+           //---------------------------------------------------
             $('#frame').attr('src', snapshot.val());
+
             $('.main-div').hide();
             $('h2').remove();
             $('#frame').show();
             $('#mainwrap').show();
             $('#sidebar').show();
             $('#sideFrame').show();
+            $('#clock2').show();
 
+            //----------------------------------------------------
 
             var sessionFlag = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/status');
             sessionFlag.once("value", function (childSnapshot){
@@ -137,9 +184,21 @@
 
             var startTime = new Date();
             startTimeMillis =  startTime.getTime();
+
+            //Time lapse warnings
+            setTimeout(function(){ alert("you have 5 minutes left");}, 300000);
+            setTimeout(function(){ alert("1 minute left");}, 540000);
+            setTimeout(function(){
+                //send a thank you note
+                alert("Thank you for your participation");
+            }, 600000);
+
         }
     });
 
+
+
+//parent.location or top.location
 
 function onClose(){
     var zflags = {};
@@ -160,6 +219,8 @@ function onClose(){
 
         flagRef.onDisconnect().update(onClose());
     }
+
+
 
     /*
         $(document).ready(function(){
@@ -213,6 +274,7 @@ function onClose(){
         });
     });
 </script>
+
 
 
 </html>

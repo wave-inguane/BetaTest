@@ -23,6 +23,10 @@ p.readable-font {
     padding: 10px;
 }
 
+div.timeLapseWarning{
+    color : #8b0000;
+}
+
 h2{
     padding: 10px;
 }
