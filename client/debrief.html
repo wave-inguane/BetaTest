@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Programming studies</title>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+
+   <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!--welcome--------------------------------------------------------->
+
+    <div class="main-div">
+            <h2>Thank you for participating in this study</h2>
+            <br>
+            <p>We hope that you found the study informative and worthwhile. Our primary goal was to increase
+               your understanding in what a mass can achieve given an appropriate platform where software
+               development can be carried out timely and to introduce and provide resources that will
+               support your classroom instruction.
+            </p>
+            <p></p>
+            <br>
+        </div>
+        <div class="accept-button">
+             <br>
+            <form id="display_test" action="/screening_task" method="post">
+                 <button id="accept_terms" class="btn btn-primary far-right">Accept</button>
+            </form>
+    </div>
+
+<!--End welcome div ---->
+
+        <script>
+//--------------------------------------------------------------------
+// Script
+//--------------------------------------------------------------------
+//Handle welcome div
+if ($) {
+    $(document).ready(
+            function() {
+                $('p').addClass('readable-font');
+            });
+    }
+        $('#accept_terms').click(function () {
+           $('#display_test').submit();
+        });
+
+            //Handle screening div
+//---------------
+//End script
+//---------------
+        </script>
+
+</body>
+</html>
+

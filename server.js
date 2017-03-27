@@ -15,6 +15,7 @@ var sessions = {};
 var sessionMembers = {};
 var activeSessions = {};
 var screenTaskTime;          //time spent on screening task
+var flag = false;
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('client'));
@@ -299,6 +300,7 @@ function startSession(session, waitlistSnapshot)
     });
 
 }
+
 //Timer
 function timeOut (sessionID) {
     console.log('session => ' + sessionID + " timed out");
@@ -310,7 +312,14 @@ function timeOut (sessionID) {
     sessionRef.update(timeOutData);
 
     sessionCompleted(sessionID);
+
 }
+
+app.post('/dropout', function (req, res) {
+
+    res.sendFile(__dirname+'/client/debrief.html');
+});
+
 
 // To be called when a session has been finished.
 function sessionCompleted(sessionID) // update Firebase
