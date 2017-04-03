@@ -131,8 +131,7 @@ var server = app.listen(app.get('port'), function () {
 
     if (nextSession == null) //SETUP FOR TESTING
         createWorkflows();
-
-    firebaseSetup();
+     firebaseSetup();
 
     console.log('http://localhost:' + port + '/');
 });
@@ -384,7 +383,6 @@ function sessionCompleted(sessionID) // update Firebase
                                                 //console.log("DEBUG workflowURL: " + childKey);
 
                                                    if (childKey == 'workflowURL') {
-
 
                                                        session.sessionID = sessionID;
                                                        session.workflowID = sessionID;
