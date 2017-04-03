@@ -371,7 +371,11 @@ function sessionCompleted(sessionID) // update Firebase
                                        var childKey = childSnapshotA.key();
                                        if((childKey == 'totalSessions')){
 
-                                           var i = childSnapshotA.val() - 1;
+                                           //update total sessions
+                                           var i = childSnapshotA.val() + 1;
+                                           queryA.update({"totalSessions": i});
+
+
                                            //create a new session and add it to the end of the session list.
                                            var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
                                            var session = {};
@@ -383,7 +387,7 @@ function sessionCompleted(sessionID) // update Firebase
                                                 //console.log("DEBUG workflowURL: " + childKey);
 
                                                    if (childKey == 'workflowURL') {
-
+                                                       i = i - 1;
                                                        session.sessionID = sessionID;
                                                        session.workflowID = sessionID;
 
@@ -399,14 +403,9 @@ function sessionCompleted(sessionID) // update Firebase
                                                    }
                                                });
                                            });
+                                           return true;
+                                       }
 
-                                           //return true;
-                                       }
-                                       //update total sessions
-                                       if((childKey == 'totalSessions')){
-                                           var i = childSnapshotA.val() + 1;
-                                           queryA.update({"totalSessions": i});
-                                       }
 
 
                                    });
