@@ -315,12 +315,12 @@ function timeOut (sessionID) {
 
 }
 
-/*
+
 app.post('/dropout', function (req, res) {
 
     res.sendFile(__dirname+'/client/debrief.html');
 });
-*/
+
 
 // To be called when a session has been finished.
 function sessionCompleted(sessionID) // update Firebase
@@ -364,8 +364,28 @@ function sessionCompleted(sessionID) // update Firebase
                                    console.log("Session update failed: " + error.message);
                                });
 
-                               //create a new session and add it to the end of the session list.
+                               //getNextSession
+                               var queryA = new Firebase(firebaseStudyURL + '/status');
+                               queryA.once("value").then(function(snapshotA) {
+                                   snapshotA.forEach(function(childSnapshotA) {
+                                       // childDataA will be the actual contents of the child
+                                       var childKey = childSnapshotA.key();
+                                       if((childKey == 'nextSessionID')){
 
+                                           var i = childSnapshotA.val() + 1;
+                                           //create a new session and add it to the end of the session list.
+                                           var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
+
+
+                                           sessions[i] = {"TEST": "testing"};
+
+                                           //append
+                                           sessionsRef.update(sessions);
+                                           return true;
+
+                                       }
+                                   });
+                               });
 
                                /*
                                var session = {};
@@ -374,8 +394,9 @@ function sessionCompleted(sessionID) // update Firebase
                                session.workflowURL = workflow.workflowURL;
                                session.timeLimitMins = workflow.timeLimitMins;
                                session.totalParticipants =  workflow.participantsPerSession;
-                               sessions[workflowID] = session;
+                               sessions[i] = session;
                                */
+                               //sessionsRef.update(sessions);
 
 
                            }else{//post
@@ -443,18 +464,25 @@ function sessionCompleted(sessionID) // update Firebase
 }
 
 
-/*
- //read all children of the ref
- adaRef.once('value', function(snapshot) {
- snapshot.forEach(function (childSnapshot) {
- if(childSnapshot.totalSessions == 'totalSessions')
- console.log("childXYZ " + childSnapshot.val());
+function getNextSessionId(){
 
- });
+    var nextSessionId = "";
 
- });
-*/
-
+    var queryA = new Firebase(firebaseStudyURL + '/status');
+    queryA.once("value").then(function(snapshotA) {
+        snapshotA.forEach(function(childSnapshotA) {
+            // childDataA will be the actual contents of the child
+            var childKey = childSnapshotA.key();
+            if((childKey == 'nextSessionID')){
+                console.log("Next session IdKey:  " + childKey);
+                nextSessionId = childSnapshotA.val();
+                console.log("Next session value:  " +  nextSessionId);
+                return nextSessionId;
+            }
+        });
+    });
+    //return nextSessionId;
+}
 
 /*
 function read(){
