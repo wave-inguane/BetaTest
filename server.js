@@ -142,7 +142,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 3;
+    var totalWorkflowCount = 2;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -295,7 +295,7 @@ function startSession(session, waitlistSnapshot)
             //set a timer, end it even if submit is not clicked
             //onDisconnect() on Fire. timer on client side
             //DONE
-            setTimeout(timeOut, 17000, nextSessionId);//10min
+            setTimeout(timeOut, 18000, nextSessionId);//10min
         }
     });
 
@@ -315,11 +315,12 @@ function timeOut (sessionID) {
 
 }
 
+/*
 app.post('/dropout', function (req, res) {
 
     res.sendFile(__dirname+'/client/debrief.html');
 });
-
+*/
 
 // To be called when a session has been finished.
 function sessionCompleted(sessionID) // update Firebase
@@ -339,6 +340,71 @@ function sessionCompleted(sessionID) // update Firebase
     //2.Check the corresponding workflow to see if there are more sessions for this workflow.
     // If so,
     // create a new session and add it to the end of the session list. // use  if (sessions[workflowID]) == 0? in another function
+    var queryW = new Firebase(firebaseStudyURL + '/workflows');
+    queryW.once("value").then(function(snapshotW) {
+        //console.log("workflow view: " + snapshotW.val());
+        snapshotW.forEach(function(childSnapshotW) {
+            // childDataW will be the actual contents of the child
+            var childDataW = childSnapshotW.key() ;
+            //console.log("Key " + childDataW);
+            if((childDataW == sessionID)){
+                console.log("workflow key: " + childDataW);
+                var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/'+ childSnapshotW.key());
+                   //read all children of the ref
+                totalSessionsRef.once('value', function(snapshot) {
+                       snapshot.forEach(function (childSnapshot) {
+                           var childKey = childSnapshot.key();
+                             // console.log("childXYZ " + childSnapshot.val());
+                           //console.log("childXYZ " + childDataA);
+                           if((childKey == 'totalSessions') && (childSnapshot.val() > 0)){
+                               //update totalSessions
+                               totalSessionsRef.update({'totalSessions': childSnapshot.val() - 1}).then(function() {
+                                   console.log("Session update succeeded.");
+                               }).catch(function(error) {
+                                   console.log("Session update failed: " + error.message);
+                               });
+
+                               //create a new session and add it to the end of the session list.
+
+
+                               /*
+                               var session = {};
+                               session.sessionID = i;
+                               session.workflowID = i;
+                               session.workflowURL = workflow.workflowURL;
+                               session.timeLimitMins = workflow.timeLimitMins;
+                               session.totalParticipants =  workflow.participantsPerSession;
+                               sessions[workflowID] = session;
+                               */
+
+
+                           }else{//post
+                               //this workflow is complete
+                               //thank the users  ??????
+
+                           }
+                       });
+
+                   });
+
+               /*
+                adaRef.update({'totalSessions': 2}).then(function() {
+                    console.log("Session update succeeded.");
+                }).catch(function(error) {
+                    console.log("Session update failed: " + error.message);
+                });
+               */
+
+
+
+                return true;
+            }
+        });
+
+
+    }, function (error) {
+        console.log("workflow view error: " + error.code);
+    });
 
 
 
@@ -375,6 +441,20 @@ function sessionCompleted(sessionID) // update Firebase
     //DONE on the client side
 
 }
+
+
+/*
+ //read all children of the ref
+ adaRef.once('value', function(snapshot) {
+ snapshot.forEach(function (childSnapshot) {
+ if(childSnapshot.totalSessions == 'totalSessions')
+ console.log("childXYZ " + childSnapshot.val());
+
+ });
+
+ });
+*/
+
 
 /*
 function read(){
