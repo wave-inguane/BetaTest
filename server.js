@@ -316,7 +316,7 @@ function timeOut (sessionID) {
 }
 
 
-app.post('/dropout', function (req, res) {
+app.post('/acknowledgement', function (req, res) {
 
     res.sendFile(__dirname+'/client/debrief.html');
 });
@@ -376,52 +376,41 @@ function sessionCompleted(sessionID) // update Firebase
                                            //create a new session and add it to the end of the session list.
                                            var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
                                            var session = {};
-                                           session.sessionID = i;
-                                           session.workflowID = sessionID;
-                                           //session.workflowURL = workflow.workflowURL;
-                                           //session.timeLimitMins = workflow.timeLimitMins;
-                                          // session.totalParticipants =  workflow.participantsPerSession;
-                                           sessions[i] = session;
 
-                                           //append
-                                           sessionsRef.update(sessions);
+                                           var urlRef = new Firebase(firebaseStudyURL + '/workflows/'+sessionID);
+                                           urlRef.once('value', function(snapshot) {
+                                               snapshot.forEach(function (childSnapshot) {
+                                                   var childKey = childSnapshot.key();
+                                                console.log("DEBUG workflowURL: " + childKey);
+
+                                                   if (childKey == 'workflowURL') {
+
+
+                                                       session.sessionID = sessionID;
+                                                       session.workflowID = sessionID;
+
+                                                       session.workflowURL = childSnapshot.val();
+                                                       //console.log("DEBUG::workflowURL: " + childSnapshot.val());
+
+                                                       session.timeLimitMins = 10;
+                                                       session.totalParticipants = 2;
+                                                       sessions[i] = session;
+                                                       //append
+                                                       sessionsRef.update(sessions);
+                                                       return true;
+                                                   }
+                                               });
+                                           });
+
                                            return true;
-
                                        }
                                    });
                                });
-
-                               /*
-                               var session = {};
-                               session.sessionID = i;
-                               session.workflowID = i;
-                               session.workflowURL = workflow.workflowURL;
-                               session.timeLimitMins = workflow.timeLimitMins;
-                               session.totalParticipants =  workflow.participantsPerSession;
-                               sessions[i] = session;
-                               */
-                               //sessionsRef.update(sessions);
-
-
-                           }else{//post
-                               //this workflow is complete
-                               //thank the users  ??????
 
                            }
                        });
 
                    });
-
-               /*
-                adaRef.update({'totalSessions': 2}).then(function() {
-                    console.log("Session update succeeded.");
-                }).catch(function(error) {
-                    console.log("Session update failed: " + error.message);
-                });
-               */
-
-
-
                 return true;
             }
         });
