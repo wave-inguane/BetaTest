@@ -375,9 +375,13 @@ function sessionCompleted(sessionID) // update Firebase
                                            var i = childSnapshotA.val() + 1;
                                            //create a new session and add it to the end of the session list.
                                            var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
-
-
-                                           sessions[i] = {"TEST": "testing"};
+                                           var session = {};
+                                           session.sessionID = i;
+                                           session.workflowID = sessionID;
+                                           //session.workflowURL = workflow.workflowURL;
+                                           //session.timeLimitMins = workflow.timeLimitMins;
+                                          // session.totalParticipants =  workflow.participantsPerSession;
+                                           sessions[i] = session;
 
                                            //append
                                            sessionsRef.update(sessions);
@@ -464,25 +468,6 @@ function sessionCompleted(sessionID) // update Firebase
 }
 
 
-function getNextSessionId(){
-
-    var nextSessionId = "";
-
-    var queryA = new Firebase(firebaseStudyURL + '/status');
-    queryA.once("value").then(function(snapshotA) {
-        snapshotA.forEach(function(childSnapshotA) {
-            // childDataA will be the actual contents of the child
-            var childKey = childSnapshotA.key();
-            if((childKey == 'nextSessionID')){
-                console.log("Next session IdKey:  " + childKey);
-                nextSessionId = childSnapshotA.val();
-                console.log("Next session value:  " +  nextSessionId);
-                return nextSessionId;
-            }
-        });
-    });
-    //return nextSessionId;
-}
 
 /*
 function read(){
