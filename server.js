@@ -381,7 +381,7 @@ function sessionCompleted(sessionID) // update Firebase
                                            urlRef.once('value', function(snapshot) {
                                                snapshot.forEach(function (childSnapshot) {
                                                    var childKey = childSnapshot.key();
-                                                console.log("DEBUG workflowURL: " + childKey);
+                                                //console.log("DEBUG workflowURL: " + childKey);
 
                                                    if (childKey == 'workflowURL') {
 
@@ -402,8 +402,15 @@ function sessionCompleted(sessionID) // update Firebase
                                                });
                                            });
 
-                                           return true;
+                                           //return true;
                                        }
+                                       //update total sessions
+                                       if((childKey == 'totalSessions')){
+                                           var i = childSnapshotA.val() + 1;
+                                           queryA.update({"totalSessions": i});
+                                       }
+
+
                                    });
                                });
 
