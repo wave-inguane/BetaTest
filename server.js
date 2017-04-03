@@ -371,7 +371,7 @@ function sessionCompleted(sessionID) // update Firebase
                                        var childKey = childSnapshotA.key();
                                        if((childKey == 'totalSessions')){
 
-                                           var i = childSnapshotA.val();
+                                           var i = childSnapshotA.val() - 1;
                                            //create a new session and add it to the end of the session list.
                                            var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
                                            var session = {};
