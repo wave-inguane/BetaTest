@@ -120,9 +120,29 @@
     waitEntryRef.onDisconnect().set(null);
 
 
+    function onClose(){
+        var zflags = {};
+        // var date = new Date();
+        var exitData = {
+            onlineState: "off",
+            exitTime : Firebase.ServerValue.TIMESTAMP
+            //update the time at firebase when we get there
+        };
+        zflags[id] = exitData;
+        return zflags;
+    }
+    //---------------------------------------------------------------------------------------------------------------------------------
+    //
+    //---------------------------------------------------------------------------------------------------------------------------------
+    function setRef(sessionID) {
+        var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionID);
+
+        flagRef.onDisconnect().update(onClose());
+    }
+
+
+
     // TODO: we want to watch only for changes to the entry for this element, not all changes.
-
-
     // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
     // does, join the session.
     waitEntryRef.on("child_added", function(snapshot) {
@@ -186,12 +206,15 @@
             startTimeMillis =  startTime.getTime();
 
             //Time lapse warnings
-            setTimeout(function(){ alert("you have 5min left");}, 300000); //300000
-            setTimeout(function(){ alert("1 minute left");}, 540000);
+            //setTimeout(function(){ alert("you have 5min left");}, 300000); //300000
+            //setTimeout(function(){ alert("1 minute left");}, 540000);
             setTimeout(function(){
                 //send a thank you note
                 //alert("Thank you for your participation");
                 $("#exitTime").submit();
+                var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionId-1);
+                flagRef.update(onClose());
+
             }, 600000);
 
         }
@@ -200,28 +223,6 @@
 
 
 //parent.location or top.location
-
-function onClose(){
-    var zflags = {};
-    var date = new Date();
-    var exitData = {
-        onlineState: "off",
-        exitTime : Firebase.ServerValue.TIMESTAMP
-        //update the time at firebase when we get there
-    };
-    zflags[id] = exitData;
-    return zflags;
-}
-    //---------------------------------------------------------------------------------------------------------------------------------
-    //
-    //---------------------------------------------------------------------------------------------------------------------------------
-    function setRef(sessionID) {
-        var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionID);
-
-        flagRef.onDisconnect().update(onClose());
-    }
-
-
 
     /*
         $(document).ready(function(){

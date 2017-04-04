@@ -150,7 +150,7 @@ function createWorkflows()
     for (var i=0; i < totalWorkflowCount; i++) {
 
         var workflow = {};
-        workflow.workflowURL = pastebinURL;// + 'workflowXYZ' + 0;
+        workflow.workflowURL = pastebinURL +'workflowXYZ' + i;
         workflow.timeLimitMins = 10;
         workflow.participantsPerSession = 2;
         workflow.totalSessions = 3;
