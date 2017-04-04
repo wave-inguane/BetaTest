@@ -141,7 +141,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 4;
+    var totalWorkflowCount = 12;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -294,7 +294,7 @@ function startSession(session, waitlistSnapshot)
             //set a timer, end it even if submit is not clicked
             //onDisconnect() on Fire. timer on client side
             //DONE
-            setTimeout(timeOut, 600000, nextSessionId);//10min
+            setTimeout(timeOut, 60000, nextSessionId);//10min
         }
     });
 
