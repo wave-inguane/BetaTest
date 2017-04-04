@@ -141,7 +141,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 12;
+    var totalWorkflowCount = 3;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -341,84 +341,14 @@ function sessionCompleted(sessionID) // update Firebase
     // create a new session and add it to the end of the session list. // use  if (sessions[workflowID]) == 0? in another function
     var queryW = new Firebase(firebaseStudyURL + '/workflows');
     queryW.once("value").then(function(snapshotW) {
-        //console.log("workflow view: " + snapshotW.val());
         snapshotW.forEach(function(childSnapshotW) {
-            // childDataW will be the actual contents of the child
             var childDataW = childSnapshotW.key() ;
             //console.log("Key " + childDataW);
             if((childDataW == sessionID)){
                 console.log("workflow key: " + childDataW);
-                var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/'+ childSnapshotW.key());
-                   //read all children of the ref
-                totalSessionsRef.once('value', function(snapshot) {
-                       snapshot.forEach(function (childSnapshot) {
-                           var childKey = childSnapshot.key();
-                             // console.log("childXYZ " + childSnapshot.val());
-                           //console.log("childXYZ " + childDataA);
-                           if((childKey == 'totalSessions') && (childSnapshot.val() > 0)){
-                               //update totalSessions
-                               totalSessionsRef.update({'totalSessions': childSnapshot.val() - 1}).then(function() {
-                                   console.log("Session update succeeded.");
-                               }).catch(function(error) {
-                                   console.log("Session update failed: " + error.message);
-                               });
-
-                               //getNextSession
-                               var queryA = new Firebase(firebaseStudyURL + '/status');
-                               queryA.once("value").then(function(snapshotA) {
-                                   snapshotA.forEach(function(childSnapshotA) {
-                                       // childDataA will be the actual contents of the child
-                                       var childKey = childSnapshotA.key();
-                                       if((childKey == 'totalSessions')){
-
-                                           //update total sessions
-                                           var i = childSnapshotA.val() + 1;
-                                           queryA.update({"totalSessions": i});
-
-
-                                           //create a new session and add it to the end of the session list.
-                                           var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
-                                           var session = {};
-
-                                           var urlRef = new Firebase(firebaseStudyURL + '/workflows/'+sessionID);
-                                           urlRef.once('value', function(snapshot) {
-                                               snapshot.forEach(function (childSnapshot) {
-                                                   var childKey = childSnapshot.key();
-                                                //console.log("DEBUG workflowURL: " + childKey);
-
-                                                   if (childKey == 'workflowURL') {
-                                                       i = i - 1;
-                                                       session.sessionID = sessionID;
-                                                       session.workflowID = sessionID;
-
-                                                       session.workflowURL = childSnapshot.val();
-                                                       //console.log("DEBUG::workflowURL: " + childSnapshot.val());
-
-                                                       session.timeLimitMins = 10;
-                                                       session.totalParticipants = 2;
-                                                       sessions[i] = session;
-                                                       //append
-                                                       sessionsRef.update(sessions);
-                                                       return true;
-                                                   }
-                                               });
-                                           });
-                                           return true;
-                                       }
-
-
-
-                                   });
-                               });
-
-                           }
-                       });
-
-                   });
-                return true;
+                updateTotalSessions(sessionID, childSnapshotW);
             }
         });
-
 
     }, function (error) {
         console.log("workflow view error: " + error.code);
@@ -458,6 +388,82 @@ function sessionCompleted(sessionID) // update Firebase
     //4. Each worker should set its logged out time when it leaves session.
     //DONE on the client side
 
+}
+
+function updateTotalSessions(sessionID, childSnapshotW){
+
+    var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/'+ childSnapshotW.key());
+    //read all children of the ref
+    totalSessionsRef.once('value', function(snapshot) {
+        snapshot.forEach(function (childSnapshot) {
+            var childKey = childSnapshot.key();
+            // console.log("childXYZ " + childSnapshot.val());
+            //console.log("childXYZ " + childDataA);
+            if((childKey == 'totalSessions') && (childSnapshot.val() > 0)){
+                //update totalSessions
+                totalSessionsRef.update({'totalSessions': childSnapshot.val() - 1}).then(function() {
+                    console.log("Session update succeeded.");
+                }).catch(function(error) {
+                    console.log("Session update failed: " + error.message);
+                });
+                getNextSession(sessionID);
+            }
+        });
+
+    });
+    return true;
+}
+
+function getNextSession(sessionID){
+
+    //getNextSession
+    var queryA = new Firebase(firebaseStudyURL + '/status');
+    queryA.once("value").then(function(snapshotA) {
+        snapshotA.forEach(function(childSnapshotA) {
+            // childDataA will be the actual contents of the child
+            var childKey = childSnapshotA.key();
+            if((childKey == 'totalSessions')){
+
+                //update total sessions
+                var i = childSnapshotA.val() + 1;
+                queryA.update({"totalSessions": i});
+
+                updateSession(i, sessionID);
+            }
+
+        });
+    });
+}
+
+function updateSession(i, sessionID){
+
+    //create a new session and add it to the end of the session list.
+    var sessionsRef = new Firebase(firebaseStudyURL + '/sessions');
+    var session = {};
+
+    var urlRef = new Firebase(firebaseStudyURL + '/workflows/'+sessionID);
+    urlRef.once('value', function(snapshot) {
+        snapshot.forEach(function (childSnapshot) {
+            var childKey = childSnapshot.key();
+            //console.log("DEBUG workflowURL: " + childKey);
+            if (childKey == 'workflowURL') {
+                i = i - 1;
+                session.sessionID = sessionID;
+                session.workflowID = sessionID;
+
+                session.workflowURL = childSnapshot.val();
+                //console.log("DEBUG::workflowURL: " + childSnapshot.val());
+
+                session.timeLimitMins = 10;
+                session.totalParticipants = 2;
+                sessions[i] = session;
+                //append
+                sessionsRef.update(sessions);
+                return true;
+            }
+        });
+    });
+    return true;
 }
 
 
