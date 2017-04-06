@@ -144,7 +144,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 3;
+    var totalWorkflowCount = 4;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -156,7 +156,7 @@ function createWorkflows()
         workflow.workflowURL = pastebinURL +'workflowXYZ' + i;
         workflow.timeLimitMins = 10;
         workflow.participantsPerSession = 1;
-        workflow.totalSessions = 3;
+        workflow.totalSessions = Math.floor((Math.random() * 4) + 1);
         var workflowID = i;
         workflows[workflowID] = workflow;
 
@@ -473,7 +473,6 @@ function updateSession(i, sessionID){
                             // Before generating new session
 
                             if ((childKey == 'workflowURL')) {
-
                                 i = i - 1;
                                 session.sessionID = next;
                                 session.workflowID = next;
@@ -482,20 +481,12 @@ function updateSession(i, sessionID){
                                 session.totalParticipants = 1;
                                 sessions2[i] = session;
                                 sessions[i] = session;
-                                /////////////////////--------------->
                                 sessionsRef.update(sessions2);
-                                //sessionsRef.update(sessions);
-
                                 removeDoneFlag();
                                 return true;
-
-                                //console.log("DEBUG workflowID: "+childSnapshot.val() )
-                            }else{
-                               // console.log("........\n All steps on this workflow have been completed \n........" );
                             }
                         });
                     });
-
 
                 }
             });
@@ -503,9 +494,7 @@ function updateSession(i, sessionID){
         return true;
     });
 
-
 }
-
 
 function getNextSessionID(callback){
 
