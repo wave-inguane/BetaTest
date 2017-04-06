@@ -13,6 +13,7 @@ var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
 var nextSession;
 var nextSessionId = 0;
 var multipleStepsSessionID = 0;
+var actualNextSessionID = 0;
 var sessions = {};
 var sessionMembers = {};
 var activeSessions = {};
@@ -191,7 +192,7 @@ function createWorkflows()
 //............................................................................................
 function firebaseSetup()
 {
-    console.log('In func firebaseSetup()');
+   // console.log('In func firebaseSetup()');
     var waitListRef = new Firebase(firebaseStudyURL + '/waitlist');
 
     // Watch for additions to the waitingList. Once the waiting list meets or exceeds the size of the
@@ -272,7 +273,7 @@ function startSession(session, waitlistSnapshot)
                         snapshotY.forEach(function (childSnapshotY) {
                             //console.log("sessionIDs : " + childSnapshotY.key())
                             if(childSnapshotY.key() == "sessionID"){
-                                console.log("BEFORE :" +nextSessionId + " ..... EQUAL ? ...... "+ childSnapshotY.val());
+                                //console.log("BEFORE :" +nextSessionId + " ..... EQUAL ? ...... "+ childSnapshotY.val());
 
                                 return true;
                       }
@@ -310,7 +311,7 @@ function startSession(session, waitlistSnapshot)
                 snapshotT.forEach(function (childSnapshotT) {
                     //console.log("sessionIDs : " + childSnapshotY.key())
                     if(childSnapshotT.key() == "sessionID"){
-                        console.log("AFTER :" +nextSessionId + " ..... EQUAL ? ...... "+ childSnapshotT.val());
+                       // console.log("AFTER :" +nextSessionId + " ..... EQUAL ? ...... "+ childSnapshotT.val());
 
                         return true;
                     }
@@ -371,7 +372,7 @@ function startSession(session, waitlistSnapshot)
                 var workerWaitlistRef = new Firebase(firebaseStudyURL + '/waitlist/' + waitlistEntrySnapshot.key() + '/sessionURL');
                 var str = session.workflowURL;
                 workerWaitlistRef.set(str);
-                console.log("URL : " + str);
+                //console.log("URL : " + str);
 
 
                 //var share = str.replace(/#-/g, "#:-");
@@ -397,7 +398,7 @@ function startSession(session, waitlistSnapshot)
 
 //Timer
 function timeOut (sessionID) {
-    console.log('session => ' + sessionID + " timed out");
+  //  console.log('session => ' + sessionID + " timed out");
     var timeOutData = {
         sessionEndedTimeMillis : Firebase.ServerValue.TIMESTAMP,
         done: "done"
@@ -433,6 +434,7 @@ function sessionCompleted(sessionID) // update Firebase
     // If so,
     // create a new session and add it to the end of the session list. // use  if (sessions[workflowID]) == 0? in another function
     //find corresponding workfolow
+    /*
     var flag = null;
     var queryW = new Firebase(firebaseStudyURL + '/workflows');
     queryW.once("value").then(function(snapshotW) {
@@ -444,10 +446,9 @@ function sessionCompleted(sessionID) // update Firebase
                 snapshotX.forEach(function (childSnapshotX) {
                     var childDataX = childSnapshotX.key() ;
                     //console.log("xKey : "+ childDataX );
-                    //----
-                    //DEBUG
-                    if (childDataW == childSnapshotX.val()) {
-                        console.log("Next Bug Session : " + childSnapshotX.val() + " workflowIDKey : " + childSnapshotW.key());
+
+                    if (childDataW == actualNextSessionID) {
+                       // console.log("Next Bug Session : " + childSnapshotX.val() + " workflowIDKey : " + childSnapshotW.key());
                         //DEBUG
                         var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/' + childSnapshotW.key());
                         //read all children of the ref
@@ -483,6 +484,77 @@ function sessionCompleted(sessionID) // update Firebase
     }, function (error) {
         console.log("workflow view error: " + error.code);
     });
+   */
+/*
+    var flag = null;
+    var queryW = new Firebase(firebaseStudyURL + '/workflows');
+    queryW.once("value").then(function(snapshotW) {
+        snapshotW.forEach(function(childSnapshotW) {
+            var childDataW = childSnapshotW.key() ;
+
+                    if (childDataW == actualNextSessionID) {
+                        // console.log("Next Bug Session : " + childSnapshotX.val() + " workflowIDKey : " + childSnapshotW.key());
+                        //DEBUG
+                        var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/' + childSnapshotW.key());
+                        //read all children of the ref
+                        totalSessionsRef.once('value', function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                var childKey = childSnapshot.key();
+                                //DEBUG
+                                if ((childKey == 'totalSessions') && (childSnapshot.val() > 0)) {
+                                    //update totalSessions
+                                    totalSessionsRef.update({'totalSessions': childSnapshot.val() - 1}).then(function () {
+                                        console.log("Session update succeeded.");
+                                        //INVOKE
+                                        getNextSessionKey(sessionID);
+                                    }).catch(function (error) {
+                                        console.log("Session update failed: " + error.message);
+                                    });
+                                }
+                            });
+                        });
+                        flag = "NotNULL";
+                        return true;//stop enumeration
+                    }else{
+                        //console.log("Next Bug Session : " + childSnapshotX.val() + " workflowIDKey : " + childSnapshotW.key());
+                    }
+
+                    //----
+                });
+            });
+*/
+
+
+    var queryX = new Firebase(firebaseStudyURL + '/sessions/'+sessionID);
+    queryX.once("value").then(function(snapshotX) {
+        snapshotX.forEach(function (childSnapshotX) {
+            //var childDataX = childSnapshotX.key();
+              if("sessionID" == childSnapshotX.key()) {
+                  //............................................................................
+                  console.log(".........\n" + " DEBUGGER " + "actualNextSessionIDs " + childSnapshotX.val() + "\n..........");
+                  //.............................................................................
+                  var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/' + childSnapshotX.val());
+                  //read all children of the ref
+                  totalSessionsRef.once('value', function (snapshot) {
+                      snapshot.forEach(function (childSnapshot) {
+                          var childKey = childSnapshot.key();
+                          //DEBUG
+                          if ((childKey == 'totalSessions') && (childSnapshot.val() > 0)) {
+                              //update totalSessions
+                              totalSessionsRef.update({'totalSessions': childSnapshot.val() - 1}).then(function () {
+                                  console.log("Session update succeeded.");
+                                  //INVOKE
+                                  getNextSessionKey(sessionID);
+                              }).catch(function (error) {
+                                  console.log("Session update failed: " + error.message);
+                              });
+                          }
+                      });
+                  });
+
+              }
+        });
+    });
 
 
     //3. Remove this session from status.activeSessions --> Firebase
@@ -492,7 +564,7 @@ function sessionCompleted(sessionID) // update Firebase
             snapshotA.forEach(function(childSnapshotA) {
                 // childDataA will be the actual contents of the child
                 var childDataA = childSnapshotA.val().sessionID;
-                console.log("childA " + childDataA);
+               // console.log("childA " + childDataA);
                 if((childDataA == sessionID)){
                     var adaRef = new Firebase(firebaseStudyURL + '/status/activeSessions/'+ childSnapshotA.key() +'/sessionID');
                     adaRef.remove().then(function() {
@@ -570,7 +642,9 @@ function updateSession(i, sessionID){
     */
     getNextSessionID(function(next) {
         multipleStepsSessionID = next;
-        console.log("actual NEXT SESSION IS : " + next);
+        actualNextSessionID = next;
+       // console.log("actual NEXT SESSION IS : " + next);
+
         var urlRef = new Firebase(firebaseStudyURL + '/sessions/' + next);
         urlRef.once('value', function (snapshot) {
             snapshot.forEach(function (childSnapshotP) {
