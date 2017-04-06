@@ -33,6 +33,19 @@
     </script>
 </head>
 <body onload="startTime()">
+
+<div class="main-div1">
+    <h2>Thank you for participating in this study</h2>
+    <br>
+    <p>We hope that you found the study informative and worthwhile. Our primary goal was to increase
+        your understanding in what a mass can achieve given an appropriate platform where software
+        development can be carried out timely and to introduce and provide resources that will
+        support your classroom instruction.
+    </p>
+    <p></p>
+    <br>
+</div>
+
 <div class="main-div">
     <h2>Waiting for participants to join.</h2>
     <div id="clock"></div>
@@ -58,6 +71,7 @@
     <button id = "button1"  class="btn btn-primary far-right" type="button" value = "Next">Next</button>
 </div>
 
+
 <form type="hidden" id="exitTime" action="/acknowledgement" method="post">
     <input type="hidden" name="taskEnded" id="taskEnded"/>
     <input type="hidden" name="participantId" id="participantId" />
@@ -78,6 +92,7 @@
     var tempList;
     var sessionId;
 
+    $('.main-div1').hide();
     $('#frame').hide();
     $('#sideFrame').hide();
     $('#mainwrap').hide();
@@ -122,21 +137,19 @@
 
     function onClose(){
         var zflags = {};
-        // var date = new Date();
         var exitData = {
             onlineState: "off",
             exitTime : Firebase.ServerValue.TIMESTAMP
-            //update the time at firebase when we get there
         };
         zflags[id] = exitData;
         return zflags;
     }
+
     //---------------------------------------------------------------------------------------------------------------------------------
     //
     //---------------------------------------------------------------------------------------------------------------------------------
     function setRef(sessionID) {
         var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionID);
-
         flagRef.onDisconnect().update(onClose());
     }
 
@@ -182,7 +195,7 @@
             $('#frame').attr('src', snapshot.val());
 
             $('.main-div').hide();
-            $('h2').remove();
+            $('h2').hide();
             $('#frame').show();
             $('#mainwrap').show();
             $('#sidebar').show();
@@ -192,10 +205,11 @@
             //----------------------------------------------------
 
             var sessionFlag = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/status');
-            sessionFlag.once("value", function (childSnapshot){
+                sessionFlag.once("value", function (childSnapshot){
                 sessionId = childSnapshot.val().nextSessionID;
-               console.log(" session: "+ sessionId);
+               //console.log("session: "+ sessionId);
                 setRef((sessionId - 1));
+
             });
 
             waitEntryRef.set(null);
@@ -210,12 +224,22 @@
             //setTimeout(function(){ alert("1 minute left");}, 540000);
             setTimeout(function(){
                 //send a thank you note
-                //alert("Thank you for your participation");
-                $("#exitTime").submit();
-                var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionId-1);
-                flagRef.update(onClose());
 
-            }, 60000);
+                $('#frame').hide();
+                $('#mainwrap').hide();
+                $('#sidebar').hide();
+                $('#sideFrame').hide();
+                $('#clock2').hide();
+                $('h2').show();
+                $('.main-div1').show();
+
+                //alert("Thank you for your participation");//use div DOM
+
+          // $("#exitTime").submit();
+                //var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionId-1);
+                //flagRef.update(onClose());
+
+            }, 15000);
 
         }
     });

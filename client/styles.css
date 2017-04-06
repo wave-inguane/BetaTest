@@ -9,6 +9,16 @@
     padding: 0px 0px 50px 50px;
     border:1px solid #c9c9c9;
 }
+.main-div1{
+    width: 90%;
+    float: inherit;
+    margin: 1%;
+    border-radius: 10px;
+    overflow: auto;
+    /*border:1px solid steelblue;*/
+    padding: 0px 0px 50px 50px;
+    border:1px solid #c9c9c9;
+}
 .accept-button{
     width: 90%;
     float: inherit;
