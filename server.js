@@ -365,13 +365,14 @@ function sessionCompleted(sessionID) // update Firebase
     // create a new session and add it to the end of the session list. // use  if (sessions[workflowID]) == 0? in another function
     //find corresponding workfolow
 
+
     var queryX = new Firebase(firebaseStudyURL + '/sessions/'+sessionID);
     queryX.once("value").then(function(snapshotX) {
         snapshotX.forEach(function (childSnapshotX) {
             //var childDataX = childSnapshotX.key();
               if("sessionID" == childSnapshotX.key()) {
                   //.........................................................................................................
-                  console.log(".........\n" + " DEBUGGER " + "actualNextSessionIDs " + childSnapshotX.val() + "\n..........");
+                  console.log(".........\n" + " DEBUGGER " + "actualNextSessionID " + childSnapshotX.val() + "\n..........");
                   //.........................................................................................................
                   var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/' + childSnapshotX.val());
                   //read all children of the ref
@@ -395,6 +396,8 @@ function sessionCompleted(sessionID) // update Firebase
               }
         });
     });
+
+
 
 
     //3. Remove this session from status.activeSessions --> Firebase
