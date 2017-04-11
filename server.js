@@ -153,7 +153,7 @@ function createWorkflows()
     for (var i=0; i < totalWorkflowCount; i++) {
 
         var workflow = {};
-        workflow.workflowURL = pastebinURL +'workflowXYZ' + i +"/content/share/events";
+        workflow.workflowURL = pastebinURL +'workflowXYZ' + i;
         workflow.timeLimitMins = 10;
         workflow.participantsPerSession = 2;
         workflow.totalSessions = 2;//Math.floor((Math.random() * 4) + 1);
