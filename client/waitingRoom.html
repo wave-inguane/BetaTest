@@ -176,7 +176,7 @@ function child_added(snapshot) {
             // Navigate to the server session URL, making sure to disable the back button for this URL
             // (don't want participant joining another session later).
 
-            //var url = snapshot.val();
+            var url = snapshot.val();
             url.replace(/#-/g, "#:-");
             window.location.replace(snapshot.val());
 
