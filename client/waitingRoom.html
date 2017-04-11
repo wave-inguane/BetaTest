@@ -167,9 +167,12 @@ function child_added(snapshot) {
     // TODO: we want to watch only for changes to the entry for this element, not all changes.
     // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
     // does, join the session.
-    waitEntryRef.limitToLast(1).on("child_added", function(snapshot) {
-        var key = snapshot.key();
+   // waitEntryRef.on("child_added", function(snapshot) {
+         waitEntryRef.on("child_added", function child_added(snapshot) {
+	    var key = snapshot.key();
         if (key == 'sessionURL') {
+		
+		
             // Navigate to the server session URL, making sure to disable the back button for this URL
             // (don't want participant joining another session later).
 
