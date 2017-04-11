@@ -168,7 +168,7 @@ function child_added(snapshot) {
     // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
     // does, join the session.
    // waitEntryRef.on("child_added", function(snapshot) {
-         waitEntryRef.limitToLast(2).on("child_added", function(snapshot) {
+         waitEntryRef.on("child_added", function(snapshot) {
 	    var key = snapshot.key();
         if (key == 'sessionURL') {
 		
