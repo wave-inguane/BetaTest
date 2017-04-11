@@ -481,7 +481,7 @@ function updateSession(i, sessionID){
                                 session.workflowID = next;
                                 session.workflowURL = childSnapshot.val();
                                 session.timeLimitMins = 10;
-                                session.totalParticipants = 1;
+                                session.totalParticipants = 2;
                                 sessions2[i] = session;
                                 sessions[i] = session;
                                 sessionsRef.update(sessions2);
