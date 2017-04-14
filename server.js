@@ -1,6 +1,6 @@
 /**
  * Created by tlatoza on 11/23/15.
- * updated by Wave Inguane on 03/27/2017.
+ * updated by Wave Inguane on 04/13/2017.
  */
 "use strict";
 
@@ -9,7 +9,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var Firebase = require("firebase");
 var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1';
-var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
+//var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
+var pastebinURL = 'https://seecoderun.firebaseio.com/test/-workflowXYZ0/content/share/events';
 var nextSession;
 var nextSessionId = 0;
 var multipleStepsSessionID = 0;
@@ -22,7 +23,7 @@ var flag = false;
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('client'));
-app.set('port',(process.env.PORT || 8889));
+app.set('port',(process.env.PORT || 8888));
 //app.set('views', './views');
 //app.set('view engine', 'mustache');
 
@@ -153,9 +154,10 @@ function createWorkflows()
     for (var i=0; i < totalWorkflowCount; i++) {
 
         var workflow = {};
-        workflow.workflowURL = pastebinURL +'workflowXYZ' + i;
+        workflow.workflowURL = pastebinURL;//+'workflowXYZ' + i;
+
         workflow.timeLimitMins = 10;
-        workflow.participantsPerSession = 1;
+        workflow.participantsPerSession = 2;
         workflow.totalSessions = Math.floor((Math.random() * 4) + 1);
         var workflowID = i;
         workflows[workflowID] = workflow;
@@ -302,11 +304,24 @@ function startSession(session, waitlistSnapshot)
                 var workerWaitlistRef = new Firebase(firebaseStudyURL + '/waitlist/' + waitlistEntrySnapshot.key() + '/sessionURL');
                 var str = session.workflowURL;
                 workerWaitlistRef.set(str);
-                //console.log("URL : " + str);
 
 
-                //var share = str.replace(/#-/g, "#:-");
-                //workerWaitlistRef.push(share);
+                var index = status.nextSessionID - 1
+                var urlRef = new Firebase(firebaseStudyURL + '/sessions/' + index);
+                urlRef.once('value', function (snapshot) {
+                    snapshot.forEach(function (childSnapshotP) {
+                        var childKey = childSnapshotP.key();
+                        if (childKey == 'workflowURL') {
+
+                            workerWaitlistRef.update({'workflowURL': childSnapshotP.val()});
+                            //console.log("URL: " + childSnapshotP.val() + "\n");
+
+                        }
+                    });
+                });
+
+
+
 
                 i++;
                 // If we've selected all of the participants, break.
@@ -315,11 +330,13 @@ function startSession(session, waitlistSnapshot)
                 }
             });
 
+
+
             // TODO: Set a timeout to be able to end the session when the time is up
             //set a timer, end it even if submit is not clicked
             //onDisconnect() on Fire. timer on client side
-            //DONE
-            setTimeout(timeOut, 15000, nextSessionId);//10min
+            //DONE              15000
+            setTimeout(timeOut, 600000, nextSessionId);//10min
 
         }
     });
@@ -365,14 +382,13 @@ function sessionCompleted(sessionID) // update Firebase
     // create a new session and add it to the end of the session list. // use  if (sessions[workflowID]) == 0? in another function
     //find corresponding workfolow
 
-
     var queryX = new Firebase(firebaseStudyURL + '/sessions/'+sessionID);
     queryX.once("value").then(function(snapshotX) {
         snapshotX.forEach(function (childSnapshotX) {
             //var childDataX = childSnapshotX.key();
               if("sessionID" == childSnapshotX.key()) {
                   //.........................................................................................................
-                  console.log(".........\n" + " DEBUGGER " + "actualNextSessionID " + childSnapshotX.val() + "\n..........");
+                  console.log(".........\n" + " DEBUGGER " + "actualNextSessionIDs " + childSnapshotX.val() + "\n..........");
                   //.........................................................................................................
                   var totalSessionsRef = new Firebase(firebaseStudyURL + '/workflows/' + childSnapshotX.val());
                   //read all children of the ref
@@ -396,8 +412,6 @@ function sessionCompleted(sessionID) // update Firebase
               }
         });
     });
-
-
 
 
     //3. Remove this session from status.activeSessions --> Firebase
@@ -499,31 +513,27 @@ function updateSession(i, sessionID){
 
 }
 
-function getNextSessionID(callback){
+function getNextSessionID(callback) {
 
     var queryA = new Firebase(firebaseStudyURL + '/sessions/');
     queryA.once("value").then(function(snapshotA) {
-
         snapshotA.forEach(function(childSnapshotA) {
             if(childSnapshotA.val().hasOwnProperty('done'))
             {
                 var queryB = new Firebase(firebaseStudyURL + '/sessions/' + childSnapshotA.key());
                 queryB.once("value").then(function (snapshotB) {
                     snapshotB.forEach(function (childSnapshotB) {
-                        var childBKey = childSnapshotB.key();// && (childSnapshotB.val().hasOwnProperty('sessionURL'))
+                        var childBKey = childSnapshotB.key();
                         if (childBKey == 'sessionID') {
                             var actualNextSession = childSnapshotB.val();
-                            //console.log("B : " +childSnapshotB.val() +" ActualNextSession :" +actualNextSession);
                             callback(actualNextSession);
-                            //return true;
                         }
                     });
                 });
             }
         });
-
     });
-
+    //return value, not applicable
 }
 
 //-----------------------------------------------------------------------------

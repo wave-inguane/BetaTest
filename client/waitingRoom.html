@@ -55,15 +55,21 @@
 
 <div id="mainwrap">
     <!--<div id="content">-->
-    <iframe  id = "frame" src="" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
-
+    <div id="sharedurlgen">
+        <!-- generate shared new shared key -->
+    <iframe  id = "hiddenframe" src="https://seecode.run/#-workflowXYZ0" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
     </iframe>
+    </div>
+
+    <iframe  id = "frame" src="" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
+    </iframe>
+    <label>Share events:</label>
+    <div id="shareEvents"></div>
     <!--
 </div>
 <div id="sidebar">
 -->
     <iframe  id = "sideFrame" src="" width="100%" style="height: 20vh;" scrolling="no" frameborder="0">
-
     </iframe>
 
     <!--<p> This is where the instructions would go</p>-->
@@ -91,8 +97,10 @@
     var startTimeMillis = 0;
     var tempList;
     var sessionId;
+    var stack = {};
 
     $('.main-div1').hide();
+    $('#sharedurlgen').hide();
     $('#frame').hide();
     $('#sideFrame').hide();
     $('#mainwrap').hide();
@@ -153,9 +161,41 @@
         flagRef.onDisconnect().update(onClose());
     }
 
+     //---------------------------------------------------
+     // update base url
+     //---------------------------------------------------
+     //$('#hiddenframe').attr('src', "https://seecode.run/#-workflowXYZ0");
+    var sharedURL = new Firebase('https://seecoderun.firebaseio.com/test/-workflowXYZ0/content/share/events');
+    sharedURL.limitToLast(1).on("child_added", function child_added(snapshot) {
+        var key1 = snapshot.key();
+        stack[0] = key1;
+        console.log("The Key : " + stack[0] + "\n");
 
 
-    // TODO: we want to watch only for changes to the entry for this element, not all changes.
+        //get session key
+        var sessionFlagx = new Firebase(firebaseStudyURL + '/status');
+        sessionFlagx.once("value", function (childSnapshotx) {
+            sessionId = childSnapshotx.val().nextSessionID;
+
+            console.log("SESSION ID: " + sessionId + "\n");
+
+            //...........................
+            var urlRef = new Firebase(firebaseStudyURL + '/sessions/' +  sessionId);
+            urlRef.once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshotP) {
+                    var childKey = childSnapshotP.key();
+                    if (childKey == 'workflowURL') {
+                        console.log("URL: " + childSnapshotP.val() + "\n");
+                        urlRef.update({'workflowURL': "https://seecoderun.firebaseio.com/#"+  stack[0]});
+                    }
+                });
+            });
+
+        });
+        //.............
+
+
+        // TODO: we want to watch only for changes to the entry for this element, not all changes.
     // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
     // does, join the session.
     waitEntryRef.on("child_added", function(snapshot) {
@@ -164,36 +204,11 @@
             // Navigate to the server session URL, making sure to disable the back button for this URL
             // (don't want participant joining another session later).
 
-            //var url = snapshot.val();
-            //url.replace(/#-/g, "#:-");
-           // window.location.replace(snapshot.val());
 
 
-           //var url = window.location.href;//.substring(1);
-           // $('DEBUG').innerHTML = url;
-           // console.log("URL: " + url);
-           // window.location.replace("http://wavelino.coffeecup.com/");
-
-
-           //$('#frame').attr('src', snapshot.val());
-
-            /*
-            document.getElementById("DEBUG").innerHTML =
-                "Page location is " + window.location.href;
-            var url = window.location.href;//.substring(1);
-            //$('DEBUG').innerHTML = url;
-            console.log("URL: " + url);
-             */
-            /*
-            var url = window.location.search;//.substring(1);
-            $('DEBUG').innerHTML = url;
-            console.log("URL: " + url);
-            */
-
-
-           //---------------------------------------------------
-            $('#frame').attr('src', snapshot.val());
-
+            var popped = stack[0];
+            $('#frame').attr('src', "https://seecode.run/#"+popped);
+            console.log("POPPED : "+popped);
             $('.main-div').hide();
             $('h2').hide();
             $('#frame').show();
@@ -202,13 +217,17 @@
             $('#sideFrame').show();
             $('#clock2').show();
 
+
+
+
             //----------------------------------------------------
 
-            var sessionFlag = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/status');
+            var sessionFlag = new Firebase('https://programmingstudies.firebaseio.coml/studies/microtaskWorkflow/test1/status');
                 sessionFlag.once("value", function (childSnapshot){
                 sessionId = childSnapshot.val().nextSessionID;
                //console.log("session: "+ sessionId);
                 setRef((sessionId - 1));
+
 
             });
 
@@ -225,6 +244,8 @@
             setTimeout(function(){
                 //send a thank you note
 
+                //---------------------------------------------------
+
                 $('#frame').hide();
                 $('#mainwrap').hide();
                 $('#sidebar').hide();
@@ -233,40 +254,22 @@
                 $('h2').show();
                 $('.main-div1').show();
 
-                //alert("Thank you for your participation");//use div DOM
+                //---------------------------------------------------
 
-          // $("#exitTime").submit();
-                //var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionId-1);
-                //flagRef.update(onClose());
-
-            }, 15000);
+            }, 600000);
 
         }
     });
 
 
+        document.getElementById("shareEvents").append(key1);
+        document.getElementById("shareEvents").append("\n");
+      console.log("SHARE : "+key1);
 
-//parent.location or top.location
+    });
 
-    /*
-        $(document).ready(function(){
-            $(window).on('beforeunload', function(){
-
-                var endTime = new Date();
-                var taskTimeMillis = endTime.getTime() - startTimeMillis;
-                $('#taskEnded').val(taskTimeMillis);
-                $('#participantId').val(id);
-
-                $('#participantPosition').val(Number(index));
-
-                $('#exitTime').submit();
-
-                //setTimeout(function(){console.log("data sent ");}, 3000);
-                return " ? ";
-            });
-
-        });
-    */
+    //......................................................................
+    //......................................................................
 
     //------------------------------------------------
     // use this function to reset state
@@ -274,6 +277,10 @@
     function resetNewUsers(){
         localStorage.removeItem("newUsersKey");
     }
+
+
+
+
 
 
 </script>
