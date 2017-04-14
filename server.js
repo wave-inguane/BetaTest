@@ -9,8 +9,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var Firebase = require("firebase");
 var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1';
-//var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
-var pastebinURL = 'https://seecoderun.firebaseio.com/test/-workflowXYZ0/content/share/events';
+var pastebinURL = 'https://seecoderun.firebaseapp.com/#-';
+//var pastebinURL = 'https://seecoderun.firebaseio.com/test/-workflowXYZ0/content/share/events';
 var nextSession;
 var nextSessionId = 0;
 var multipleStepsSessionID = 0;
@@ -145,7 +145,7 @@ var server = app.listen(app.get('port'), function () {
 //..............................................................................................
 function createWorkflows()
 {
-    var totalWorkflowCount = 4;
+    var totalWorkflowCount = 5;
 
     var workflows = {};
     //var sessions = {};//moved to global field area
@@ -154,7 +154,7 @@ function createWorkflows()
     for (var i=0; i < totalWorkflowCount; i++) {
 
         var workflow = {};
-        workflow.workflowURL = pastebinURL;//+'workflowXYZ' + i;
+        workflow.workflowURL = pastebinURL+'workflowXYZ' + i;
 
         workflow.timeLimitMins = 10;
         workflow.participantsPerSession = 2;
@@ -306,26 +306,24 @@ function startSession(session, waitlistSnapshot)
                 workerWaitlistRef.set(str);
 
 
-                var index = status.nextSessionID - 1
-                var urlRef = new Firebase(firebaseStudyURL + '/sessions/' + index);
-                urlRef.once('value', function (snapshot) {
-                    snapshot.forEach(function (childSnapshotP) {
-                        var childKey = childSnapshotP.key();
-                        if (childKey == 'workflowURL') {
-
-                            workerWaitlistRef.update({'workflowURL': childSnapshotP.val()});
-                            //console.log("URL: " + childSnapshotP.val() + "\n");
-
-                        }
-                    });
-                });
-
-
-
-
                 i++;
                 // If we've selected all of the participants, break.
                 if (i >= session.totalParticipants) {
+                    /*
+                    var index = (nextSessionId - 1);
+                    var urlRef = new Firebase(firebaseStudyURL + '/sessions/' + index);
+                    urlRef.once('value', function (snapshot) {
+                        snapshot.forEach(function (childSnapshotP) {
+                            var childKey = childSnapshotP.key();
+                            if (childKey == 'workflowURL') {
+
+                                workerWaitlistRef.update({'workflowURL': childSnapshotP.val()});
+                                //console.log("URL: " + childSnapshotP.val() + "\n");
+
+                            }
+                        });
+                    });
+                    */
                     return true;    // break
                 }
             });
@@ -336,7 +334,7 @@ function startSession(session, waitlistSnapshot)
             //set a timer, end it even if submit is not clicked
             //onDisconnect() on Fire. timer on client side
             //DONE              15000
-            setTimeout(timeOut, 600000, nextSessionId);//10min
+            setTimeout(timeOut, 20000, nextSessionId);//10min
 
         }
     });

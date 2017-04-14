@@ -55,16 +55,19 @@
 
 <div id="mainwrap">
     <!--<div id="content">-->
+    <!--
     <div id="sharedurlgen">
-        <!-- generate shared new shared key -->
     <iframe  id = "hiddenframe" src="https://seecode.run/#-workflowXYZ0" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
     </iframe>
     </div>
+     -->
 
     <iframe  id = "frame" src="" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
     </iframe>
+    <!--
     <label>Share events:</label>
     <div id="shareEvents"></div>
+    -->
     <!--
 </div>
 <div id="sidebar">
@@ -100,7 +103,7 @@
     var stack = {};
 
     $('.main-div1').hide();
-    $('#sharedurlgen').hide();
+    //$('#sharedurlgen').hide();
     $('#frame').hide();
     $('#sideFrame').hide();
     $('#mainwrap').hide();
@@ -165,12 +168,12 @@
      // update base url
      //---------------------------------------------------
      //$('#hiddenframe').attr('src', "https://seecode.run/#-workflowXYZ0");
+    /*
     var sharedURL = new Firebase('https://seecoderun.firebaseio.com/test/-workflowXYZ0/content/share/events');
     sharedURL.limitToLast(1).on("child_added", function child_added(snapshot) {
         var key1 = snapshot.key();
         stack[0] = key1;
         console.log("The Key : " + stack[0] + "\n");
-
 
         //get session key
         var sessionFlagx = new Firebase(firebaseStudyURL + '/status');
@@ -178,9 +181,11 @@
             sessionId = childSnapshotx.val().nextSessionID;
 
             console.log("SESSION ID: " + sessionId + "\n");
-
+*/
+            /*
             //...........................
-            var urlRef = new Firebase(firebaseStudyURL + '/sessions/' +  sessionId);
+            var index = sessionId -1;
+            var urlRef = new Firebase(firebaseStudyURL + '/sessions/' + index);
             urlRef.once('value', function (snapshot) {
                 snapshot.forEach(function (childSnapshotP) {
                     var childKey = childSnapshotP.key();
@@ -193,7 +198,7 @@
 
         });
         //.............
-
+*/
 
         // TODO: we want to watch only for changes to the entry for this element, not all changes.
     // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
@@ -206,9 +211,10 @@
 
 
 
-            var popped = stack[0];
-            $('#frame').attr('src', "https://seecode.run/#"+popped);
-            console.log("POPPED : "+popped);
+            //var popped = stack[0];
+           // $('#frame').attr('src', "https://seecode.run/#"+popped);
+            //console.log("POPPED : "+popped);
+            $('#frame').attr('src', snapshot.val());
             $('.main-div').hide();
             $('h2').hide();
             $('#frame').show();
@@ -256,18 +262,18 @@
 
                 //---------------------------------------------------
 
-            }, 600000);
+            }, 20000);
 
         }
     });
 
-
+/*
         document.getElementById("shareEvents").append(key1);
         document.getElementById("shareEvents").append("\n");
-      console.log("SHARE : "+key1);
+        console.log("SHARE : "+key1);
 
     });
-
+*/
     //......................................................................
     //......................................................................
 
