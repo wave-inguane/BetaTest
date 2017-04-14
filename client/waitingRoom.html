@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Programming studies</title>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+        function startTime() {
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('clock').innerHTML =
+                h + ":" + m + ":" + s;
+
+            document.getElementById('clock2').innerHTML =
+                h + ":" + m + ":" + s;
+
+            var t = setTimeout(startTime, 500);
+
+        }
+        function checkTime(i) {
+            if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+            return i;
+        }
+    </script>
+</head>
+<body onload="startTime()">
+
+<div class="main-div1">
+    <h2>Thank you for participating in this study</h2>
+    <br>
+    <p>We hope that you found the study informative and worthwhile. Our primary goal was to increase
+        your understanding in what a mass can achieve given an appropriate platform where software
+        development can be carried out timely and to introduce and provide resources that will
+        support your classroom instruction.
+    </p>
+    <p></p>
+    <br>
+</div>
+
+<div class="main-div">
+    <h2>Waiting for participants to join.</h2>
+    <div id="clock"></div>
+</div>
+<!--  https://api.jquery.com/remove/ -->
+<!-- <p id="tracking"></p> -->
+
+<div id="mainwrap">
+    <!--<div id="content">-->
+    <div id="sharedurlgen">
+        <!-- generate shared new shared key -->
+    <iframe  id = "hiddenframe" src="https://seecode.run/#-workflowXYZ0" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
+    </iframe>
+    </div>
+
+    <iframe  id = "frame" src="" width="100%" style="height: 75vh;" scrolling="no" frameborder="0">
+    </iframe>
+    <label>Share events:</label>
+    <div id="shareEvents"></div>
+    <!--
+</div>
+<div id="sidebar">
+-->
+    <iframe  id = "sideFrame" src="" width="100%" style="height: 20vh;" scrolling="no" frameborder="0">
+    </iframe>
+
+    <!--<p> This is where the instructions would go</p>-->
+
+    <button id = "button1"  class="btn btn-primary far-right" type="button" value = "Next">Next</button>
+</div>
+
+
+<form type="hidden" id="exitTime" action="/acknowledgement" method="post">
+    <input type="hidden" name="taskEnded" id="taskEnded"/>
+    <input type="hidden" name="participantId" id="participantId" />
+    <input type="hidden" name="participantPosition" id="participantPosition" />
+</form>
+<!--</div>-->
+
+<div id="clock2"></div>
+<div id="DEBUG"></div>
+</body>
+
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+<script>
+    var firebaseStudyURL = 'https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1';
+    var startTimeMillis = 0;
+    var tempList;
+    var sessionId;
+    var stack = {};
+
+    $('.main-div1').hide();
+    $('#sharedurlgen').hide();
+    $('#frame').hide();
+    $('#sideFrame').hide();
+    $('#mainwrap').hide();
+    $('#sidebar').hide();
+    $('#clock2').hide();
+    var waiting = localStorage.getItem("candidate");
+    if(waiting != null) {
+        var workerPresent = JSON.parse(waiting);
+    }
+    var id =  workerPresent[0];//getUrlParameter('workerID');
+
+    var temp = localStorage.getItem("newUsersKey");
+    if(temp != null) {
+        tempList = JSON.parse(temp);
+    }
+
+    //position
+    var curr_name = id;
+    function findUser(element) {
+        return element == curr_name;
+    }
+
+    tempList = tempList.slice(0,2);
+    var index = tempList.findIndex(findUser);
+    if(index != -1) {
+        //index = index % 2;
+        console.log('Index: [ ' + index + ' ] userID = ' + id);//DEBUG
+    }
+    //end position
+
+
+
+    var waitListRef = new Firebase(firebaseStudyURL + '/waitlist');
+
+    // Add an entry to the waitlist to start waiting for a session to be assigned.
+    var waitEntryRef = waitListRef.push({ "workerId": id});
+
+
+    // If we disconnect before we get assigned a room, remove us from the waiting list.
+    waitEntryRef.onDisconnect().set(null);
+
+
+    function onClose(){
+        var zflags = {};
+        var exitData = {
+            onlineState: "off",
+            exitTime : Firebase.ServerValue.TIMESTAMP
+        };
+        zflags[id] = exitData;
+        return zflags;
+    }
+
+    //---------------------------------------------------------------------------------------------------------------------------------
+    //
+    //---------------------------------------------------------------------------------------------------------------------------------
+    function setRef(sessionID) {
+        var flagRef = new Firebase('https://programmingstudies.firebaseio.com/studies/microtaskWorkflow/test1/sessions/' + sessionID);
+        flagRef.onDisconnect().update(onClose());
+    }
+
+     //---------------------------------------------------
+     // update base url
+     //---------------------------------------------------
+     //$('#hiddenframe').attr('src', "https://seecode.run/#-workflowXYZ0");
+    var sharedURL = new Firebase('https://seecoderun.firebaseio.com/test/-workflowXYZ0/content/share/events');
+    sharedURL.limitToLast(1).on("child_added", function child_added(snapshot) {
+        var key1 = snapshot.key();
+        stack[0] = key1;
+        console.log("The Key : " + stack[0] + "\n");
+
+
+        //get session key
+        var sessionFlagx = new Firebase(firebaseStudyURL + '/status');
+        sessionFlagx.once("value", function (childSnapshotx) {
+            sessionId = childSnapshotx.val().nextSessionID;
+
+            console.log("SESSION ID: " + sessionId + "\n");
+
+            //...........................
+            var urlRef = new Firebase(firebaseStudyURL + '/sessions/' +  sessionId);
+            urlRef.once('value', function (snapshot) {
+                snapshot.forEach(function (childSnapshotP) {
+                    var childKey = childSnapshotP.key();
+                    if (childKey == 'workflowURL') {
+                        console.log("URL: " + childSnapshotP.val() + "\n");
+                        urlRef.update({'workflowURL': "https://seecoderun.firebaseio.com/#"+  stack[0]});
+                    }
+                });
+            });
+
+        });
+        //.............
+
+
+        // TODO: we want to watch only for changes to the entry for this element, not all changes.
+    // When the server assigns a session for us, it will set in on firebase. Watch for this to happen. When it
+    // does, join the session.
+    waitEntryRef.on("child_added", function(snapshot) {
+        var key = snapshot.key();
+        if (key == 'sessionURL') {
+            // Navigate to the server session URL, making sure to disable the back button for this URL
+            // (don't want participant joining another session later).
+
+
+
+            var popped = stack[0];
+            $('#frame').attr('src', "https://seecode.run/#"+popped);
+            console.log("POPPED : "+popped);
+            $('.main-div').hide();
+            $('h2').hide();
+            $('#frame').show();
+            $('#mainwrap').show();
+            $('#sidebar').show();
+            $('#sideFrame').show();
+            $('#clock2').show();
+
+
+
+
+            //----------------------------------------------------
+
+            var sessionFlag = new Firebase('https://programmingstudies.firebaseio.coml/studies/microtaskWorkflow/test1/status');
+                sessionFlag.once("value", function (childSnapshot){
+                sessionId = childSnapshot.val().nextSessionID;
+               //console.log("session: "+ sessionId);
+                setRef((sessionId - 1));
+
+
+            });
+
+            waitEntryRef.set(null);
+
+            resetNewUsers();
+
+            var startTime = new Date();
+            startTimeMillis =  startTime.getTime();
+
+            //Time lapse warnings
+            //setTimeout(function(){ alert("you have 5min left");}, 300000); //300000
+            //setTimeout(function(){ alert("1 minute left");}, 540000);
+            setTimeout(function(){
+                //send a thank you note
+
+                //---------------------------------------------------
+
+                $('#frame').hide();
+                $('#mainwrap').hide();
+                $('#sidebar').hide();
+                $('#sideFrame').hide();
+                $('#clock2').hide();
+                $('h2').show();
+                $('.main-div1').show();
+
+                //---------------------------------------------------
+
+            }, 600000);
+
+        }
+    });
+
+
+        document.getElementById("shareEvents").append(key1);
+        document.getElementById("shareEvents").append("\n");
+      console.log("SHARE : "+key1);
+
+    });
+
+    //......................................................................
+    //......................................................................
+
+    //------------------------------------------------
+    // use this function to reset state
+    //------------------------------------------------
+    function resetNewUsers(){
+        localStorage.removeItem("newUsersKey");
+    }
+
+
+
+
+
+
+</script>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script>
+    //<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"><script>
+    //var locations = ["welcome.html", "successCreatingWorkflows.html", "demographics.html","screening.html"];
+    var locations = ["instructions1.html", "instructions2.html"];
+    var currentIndex = 0;
+    var len = locations.length;
+    //var len2 = locations2.length;
+    $(document).ready(function(){
+        $('#button1').click(function() {
+            currentIndex = this.value == "Next" ?
+                currentIndex < len - 1 ? ++currentIndex : 0 :
+                //changed from a colon to a semicolon
+                currentIndex > 0 ? --currentIndex : len - 1;
+            //currentIndex > 0 ? --currentIndex : len2 - 1;
+
+            //$('#frame').attr('src', locations[currentIndex]);
+            $('#sideFrame').attr('src', locations[currentIndex]);
+        });
+    });
+</script>
+
+
+
+</html>
